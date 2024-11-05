@@ -3,7 +3,7 @@
 <html lang="zh_CN">
 <head>
     <meta charset="utf-8" />
-    <title>PCC | Tremseの部屋</title>
+    <title>原型链污染 | Tremseの部屋</title>
     <meta name="author" content="Tremse" />
     <meta name="description" content="" />
     <meta name="keywords" content="" />
@@ -156,7 +156,7 @@
         <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
             <div class="article">
     <div>
-        <h1>PCC</h1>
+        <h1>原型链污染</h1>
     </div>
     <div class="info">
         <span class="date">
@@ -175,8 +175,15 @@
             
             <span class="tag">
                 
-                <a href="/tags/CTF/" style="color: #ffa2c4">
+                <a href="/tags/CTF/" style="color: #00bcd4">
                     CTF
+                </a>
+            </span>
+            
+            <span class="tag">
+                
+                <a href="/tags/JS/" style="color: #ff7d73">
+                    JS
                 </a>
             </span>
             
@@ -185,7 +192,91 @@
     </div>
     
     <div class="content" v-pre>
-        
+        <h5 id="随便扯两句程度的导入"><a href="#随便扯两句程度的导入" class="headerlink" title="随便扯两句程度的导入"></a>随便扯两句程度的导入</h5><p>&emsp;&emsp;<font color="#9f9f9f">今天去打了省预赛，web第一题就是原型链污染(提示直接写在源码上了)，刚好mini上做过同个考点的题，本来觉得必拿下啊，结果在提交post请求时一直爆炸(Missing id,详见后方源码)。<br>&emsp;&emsp;唔姆，其实就算确实能post成功也做不来的，因为我制作过python的原型链污染，当时没去研究过js的(说起来js的这个考点更经典一些啊，没看真是疏忽了&#x1F972;)<br>&emsp;&emsp;坐牢三个钟头只做出那么一道签到题，这下我终于意识到会的东西不写写立马就不会了，content-type这些东西也太依赖复制粘贴，总之就是实力都是互联网给的，不是自己的，唉。既然如此，就写点笔记巩固以下好了</font></p>
+<h2 id="什么是原型链"><a href="#什么是原型链" class="headerlink" title="什么是原型链?"></a>什么是原型链?</h2><blockquote>
+<p>请详见<a target="_blank" rel="noopener" href="https://blog.csdn.net/cc18868876837/article/details/81211729">这里</a>,写的很详细也很通俗易懂~</p>
+</blockquote>
+<h2 id="什么是原型链污染"><a href="#什么是原型链污染" class="headerlink" title="什么是原型链污染"></a>什么是原型链污染</h2><p>&emsp;&emsp;由于访问对象时，对象可以访问其原型的属性方法，那么当然也可以修改他们，这就是较为粗略的原型链污染的解释。<br>&emsp;&emsp;当然，也不是所有情况下都能够污染成功的。必须要在对象获取属性属于<font color="#ff9f9f"><strong>深拷贝</strong></font>的情况下才能够通过对象修改原型，否则只是将对象的原型指向另一个对象罢了，这样就不能达到修改的目的了。</p>
+<blockquote>
+<p>&emsp;&emsp;一个例子就是Object.assign(target, …sources)这个方法。他执行的是浅拷贝，这意味着如果源对象(sources)的属性值是对象的引用，它只会复制引用值，而不是对象本身(所以是不会对sources产生任何影响的)。<br>&emsp;&emsp;&emsp;&emsp;因此，如果源对象的属性值是对象，那么目标对象拷贝得到的是这个对象的引用。</p>
+</blockquote>
+<p>&emsp;&emsp;所以能够进行原型链污染的话基本上会存在一个用户自定义(或者第三方库定义，用户复用)的<font color="#ff9f9f"><strong>不安全的递归合并函数</strong></font>(也就是能够通过递归不断向上访问原型，并且通过深拷贝获得他们的属性值的函数)。<br>&emsp;&emsp;直接拿这次省赛预赛的题目举例子吧,下面是源码。</p>
+<pre><code class="JS">const express = require(&#39;express&#39;);
+const _ = require(&#39;lodash&#39;);
+const fs = require(&#39;fs&#39;);
+const app = express();
+
+app.use(express.json());
+
+// 存储笔记的对象
+const notes = &#123;&#125;;
+
+// 创建新笔记
+app.post(&#39;/api/notes&#39;, (req, res) =&gt; &#123;
+    const noteId = req.body.id;
+    const noteData = req.body;
+    
+    if (!noteId) &#123;
+        return res.status(400).json(&#123; error: &#39;Missing id&#39; &#125;);
+    &#125;
+
+    // 使用lodash.merge，该版本存在原型链污染漏洞
+    notes[noteId] = &#123;&#125;;
+    _.merge(notes[noteId], noteData);
+    console.log(&#39;Note prototype:&#39;, Object.getPrototypeOf(notes[noteId]));
+    console.log(&#39;Note properties:&#39;, notes[noteId]);
+    res.json(notes[noteId]);
+&#125;);
+
+// 获取笔记
+app.get(&#39;/api/notes/:id&#39;, (req, res) =&gt; &#123;
+    const noteId = req.params.id;
+    
+    if (!notes[noteId]) &#123;
+        return res.status(404).json(&#123; error: &#39;Note not found&#39; &#125;);
+    &#125;
+    
+    res.json(notes[noteId]);
+&#125;);
+
+// 获取flag (仅管理员可访问)
+app.get(&#39;/api/flag&#39;, (req, res) =&gt; &#123;
+    const noteId = req.headers[&#39;note-id&#39;];
+    
+    if (!noteId || !notes[noteId]) &#123;
+        return res.status(403).json(&#123; error: &#39;Authentication required&#39; &#125;);
+    &#125;
+
+    if (!notes[noteId].isAdmin) &#123;
+        return res.status(403).json(&#123; error: &#39;Admin access required&#39; &#125;);
+    &#125;
+
+    try &#123;
+        const flag = fs.readFileSync(&#39;/flag&#39;, &#39;utf8&#39;);
+        res.json(&#123; flag: flag.trim() &#125;);
+    &#125; catch (err) &#123;
+        res.status(500).json(&#123; error: &#39;Error reading flag&#39; &#125;);
+    &#125;
+&#125;);
+
+app.listen(8000, () =&gt; &#123;
+    console.log(&#39;Server running on port 8000&#39;);
+&#125;);
+</code></pre>
+<p>&emsp;&emsp;可以看到其中有一条非常明显的注释，相当于是把答案直接告诉我们了(当然我不知道js的原型链污染我做不来一点&#x1F972;)。<br>&emsp;&emsp;这里merge函数的意思也很明确，就是将noteData中的数据分配给notes[noteId]这个对象。并且根据下面获取flag的代码我们可以发现notes[noteId]对象有一个isAdmin的属性，只要它true，就能通过携带note-id这个请求头标识来获取flag了。<br>&emsp;&emsp;根据原型链的知识，只要这样构造:</p>
+<pre><code class="JSON">&#123;
+    &quot;id&quot;:1,
+    &quot;__proto__&quot;:
+    &#123;
+        &quot;isAdmin&quot;:true
+    &#125;
+&#125;
+</code></pre>
+<p>&emsp;&emsp;这样就可以直接访问到notes[noteId]的原型并且将其isAdmin属性设置为true，之后获取flag就畅通无阻了。</p>
+<blockquote>
+<p>&emsp;&emsp;所以真正的了解漏洞的原理是非常重要的，这样就能更灵活的做题了&#x1F60B;</p>
+</blockquote>
+
     </div>
     
     

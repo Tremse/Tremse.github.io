@@ -326,7 +326,6 @@
 #home-posts .post:hover {
     box-shadow: 0 0 5px #c4c4c4;
     background-color: #d6ffe2;
-    cursor: pointer;
     transition: 0.5s;
 }
 #home-posts-wrap {
