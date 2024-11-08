@@ -184,14 +184,14 @@
             
             <span class="tag">
                 
-                <a href="/tags/Web/" style="color: #ffa2c4">
+                <a href="/tags/Web/" style="color: #03a9f4">
                     Web
                 </a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/JS/" style="color: #00bcd4">
+                <a href="/tags/JS/" style="color: #ffa2c4">
                     JS
                 </a>
             </span>
@@ -272,7 +272,7 @@ app.listen(8000, () =&gt; &#123;
     console.log(&#39;Server running on port 8000&#39;);
 &#125;);
 </code></pre>
-<p>&emsp;&emsp;可以看到其中有一条非常明显的注释，相当于是把答案直接告诉我们了(当然我不知道js的原型链污染我做不来一点&#x1F972;)。<br>&emsp;&emsp;这里merge函数的意思也很明确，就是将noteData中的数据分配给notes[noteId]这个对象。并且根据下面获取flag的代码我们可以发现notes[noteId]对象有一个isAdmin的属性，只要它true，就能通过携带note-id这个请求头标识来获取flag了。<br>&emsp;&emsp;根据原型链的知识，只要这样构造:</p>
+<p>&emsp;&emsp;可以看到其中有一条非常明显的注释，相当于是把答案直接告诉我们了(<em>当然我不知道js的原型链污染我做不来一点</em>&#x1F972;)。<br>&emsp;&emsp;这里merge函数的意思也很明确，就是将noteData中的数据分配给notes[noteId]这个对象。并且根据下面获取flag的代码我们可以发现notes[noteId]对象有一个isAdmin的属性，只要它true，就能通过携带note-id这个请求头标识来获取flag了。<br>&emsp;&emsp;根据原型链的知识，只要这样构造:</p>
 <pre><code class="JSON">&#123;
     &quot;id&quot;:1,
     &quot;__proto__&quot;:
