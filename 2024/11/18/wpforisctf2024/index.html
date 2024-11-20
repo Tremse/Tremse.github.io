@@ -184,7 +184,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/Web/" style="color: #00bcd4">
+                <a href="/tags/Web/" style="color: #ffa2c4">
                     Web
                 </a>
             </span>
@@ -392,11 +392,11 @@ echo urlencode(serialize($a));
 <h3 id="10小蓝鲨的临时存储室"><a href="#10-小蓝鲨的临时存储室" class="headerlink" title="10.小蓝鲨的临时存储室"></a>10.小蓝鲨的临时存储室</h3><p>&emsp;&emsp;rce题，于我而言也是认识linux很多东西的好题一道。打个马很容易，但是进了靶机文件目录，准备cat flag的时候才发现不成，一看权限，只有root可读可改，那其实这题给我误导到提权好久，感谢mufeng05大佬的指导，才知道没那么麻烦&#x1FAE1;<br>&emsp;&emsp;最主要是要意识到这个定时发生的sh（所以web手要对一些动态的反应敏感些呢），它会定时删去我们上传的php文件，所以我们把马打进去运行shell的时候，经常会出现404，这就是这个.sh文件搞的鬼。当然，我们也可以利用它。它就在根目录里:</p>
 <pre><code>#!/bin/bash find /var/www/localhost/htdocs/uploads/ -type f -name &quot;*.php&quot; -exec rm -f &#123;&#125; \;
 </code></pre>
-<p>&emsp;&emsp;执行ls -l &#x2F;down_file.sh,发现我们对他是有修改权限的。从内容看到它是使用bin&#x2F;bash的，具有root权限，那么我们就可以追加修改&#x2F;flag的权限了.<br>最后的pl如下:</p>
+<p>&emsp;&emsp;执行<span style="font-family:'Cascadia Code';color:#6faf9f">ls -l &#x2F;down_file.sh</span>,发现我们对他是有修改权限的。从内容看到它是使用bin&#x2F;bash的，具有root权限，那么我们就可以追加修改&#x2F;flag的权限了.<br>最后的pl如下:</p>
 <pre><code class="GET_data">x=echo &quot;chmod 777 /flag;&quot; &gt;&gt;/down_file.sh
 </code></pre>
-<p>然后就畅通无阻啦~</p>
-<h3 id="11千年樱"><a href="#11-千年樱" class="headerlink" title="11.千年樱"></a>11.千年樱</h3><p>&emsp;&emsp;php综合题(是我这次做的题里感觉含金量比较高的了)。首先是cookie伪造，比较常规<br>源码:</p>
+<p>&emsp;&emsp;然后就畅通无阻啦~</p>
+<h3 id="11千年樱"><a href="#11-千年樱" class="headerlink" title="11.千年樱"></a>11.千年樱</h3><p>&emsp;&emsp;php综合题(是我这次做的题里感觉含金量比较高的了)。首先是cookie伪造，比较常规.<br>&emsp;&emsp;源码:</p>
 <pre><code class="PHP">&lt;?php
 include &quot;dir.php&quot;;
 highlight_file(__FILE__);
@@ -475,11 +475,12 @@ else&#123;
 </code></pre>
 <p>&emsp;&emsp;这下好了，我们的输入只能限制于php filter协议里的过滤器了。这个时候就要用到神奇的phpfilter链哩~</p>
 <blockquote>
-<p>这个神奇的链子的知识准备在另一篇笔记里写，这里就带过啦<br>&emsp;&emsp;我们可以用神奇的php_filter_chain_generator工具构造filter链，</p>
+<p>这个神奇的链子的知识准备在另一篇笔记里写，这里就带过啦</p>
 </blockquote>
-<pre><code class="CMD">python php_filter_chain_generator.py --chain sakura for ISCTF&lt;?php
+<p>&emsp;&emsp;我们可以用神奇的php_filter_chain_generator工具构造filter链:</p>
+<pre><code>python php_filter_chain_generator.py --chain sakura for ISCTF&lt;?php
 </code></pre>
-<p>&emsp;&emsp;特别注意这个&lt;?php,这是因为我们的工具构造链所得出的字符串除了目标字符串还会有很多冗余(垃圾数据),而php fileter中有一个过滤器，<br>string.strip_tags,它可以删去字符串中html和php标签，也就是说，我们只要在生成的链子末尾加上这个过滤器，就可以把后边的冗余全部删去，得到的字符串就非常纯净了。</p>
+<p>&emsp;&emsp;特别注意这个&lt;?php,这是因为我们的工具构造链所得出的字符串除了目标字符串还会有很多冗余(垃圾数据),而php fileter中有一个过滤器:<font color="#ff9f9f"><strong>string.strip_tags</strong>,它可以删去字符串中html和php标签</font>，也就是说，我们只要在生成的链子末尾加上这个过滤器，就可以把后边的冗余全部删去，得到的字符串就非常纯净了。</p>
 <blockquote>
 <p>这里要感谢mysid佬和mufeng05佬~</p>
 </blockquote>
