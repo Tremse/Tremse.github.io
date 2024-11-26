@@ -184,7 +184,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/Web/" style="color: #ffa2c4">
+                <a href="/tags/Web/" style="color: #00a596">
                     Web
                 </a>
             </span>
@@ -194,12 +194,6 @@
     </div>
     
     <div class="content" v-pre>
-        
-    <div id="toc">
-        <strong class="sidebar-title">&nbsp&nbsp&nbsp&nbsp目录</strong>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#wp-for-isctf2024"><span class="toc-text">wp for isctf2024</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#125%E6%97%B6%E6%99%93%E5%B1%B1%E7%91%9E%E5%B8%8C%E7%94%9F%E6%97%A5%E4%BC%9A"><span class="toc-text">1.25时晓山瑞希生日会</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E5%B0%8F%E8%93%9D%E9%B2%A8%E7%9A%84%E5%86%92%E9%99%A9"><span class="toc-text">2.小蓝鲨的冒险</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3ezssti"><span class="toc-text">3.ezssti</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4upuploader"><span class="toc-text">4.UP!UPloader！</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#51z_php"><span class="toc-text">5.1z_php</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6ezserialize"><span class="toc-text">6.ezserialize</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7ezrce"><span class="toc-text">7.ezrce</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%E5%B0%8F%E8%93%9D%E9%B2%A8%E7%9A%84%E7%A7%98%E5%AF%86"><span class="toc-text">8.小蓝鲨的秘密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9%E5%A4%A9%E5%91%BD%E4%BA%BA"><span class="toc-text">9.天命人</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10%E5%B0%8F%E8%93%9D%E9%B2%A8%E7%9A%84%E4%B8%B4%E6%97%B6%E5%AD%98%E5%82%A8%E5%AE%A4"><span class="toc-text">10.小蓝鲨的临时存储室</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11%E5%8D%83%E5%B9%B4%E6%A8%B1"><span class="toc-text">11.千年樱</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E7%9A%84%E4%B8%80%E7%82%B9%E7%82%B9%E6%83%B3%E6%B3%95"><span class="toc-text">最后的一点点想法</span></a></li></ol></li></ol></li></ol></li></ol>
-    </div>
-
         <h1 id="wp-for-isctf2024"><a href="#wp-for-isctf2024" class="headerlink" title="wp for isctf2024"></a>wp for isctf2024</h1><h3 id="125时晓山瑞希生日会"><a href="#1-25时晓山瑞希生日会" class="headerlink" title="1.25时晓山瑞希生日会"></a>1.25时晓山瑞希生日会</h3><p>&emsp;&emsp;签到题，考察http请求头相关知识，首先修改user-agent为Project Sekai，再修改X-Forwarded-For为127.0.0.1，最后设置时间为Date: Sun, 27 Aug 2024 05:00:00 GMT。</p>
 <h3 id="2小蓝鲨的冒险"><a href="#2-小蓝鲨的冒险" class="headerlink" title="2.小蓝鲨的冒险"></a>2.小蓝鲨的冒险</h3><p>&emsp;&emsp;签到题，考察php各种特性。先利用<span style="font-family:'Cascadia Code';color:#6faf9f">@parse_str($b);</span>语句，传入<span style="font-family:'Cascadia Code';color:#6faf9f">b&#x3D;a[0]&#x3D;MMHUWUV</span>满足第一个条件。再post将num设为03750(8进制2024)。最后设定which为flag即可。</p>
 <h3 id="3ezssti"><a href="#3-ezssti" class="headerlink" title="3.ezssti"></a>3.ezssti</h3><p>&emsp;&emsp;PYssti,对于我来说算是新题。这里直接给出payload</p>
@@ -495,7 +489,6 @@ else&#123;
     
     
 </div>
-<link rel="stylesheet" href="/css/toc.css" />
             <footer id="footer">
     <div id="footer-wrap">
         <div>
