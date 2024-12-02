@@ -1,0 +1,35 @@
+.toc_title{
+    color: rgb(81, 180, 255);
+    font-weight: bolder;
+
+    position: relative;
+    left: 22px;
+}
+#ic{
+    position: relative;
+    left: 21px;
+}
+#toc{
+    max-width: 300px;
+    max-height: 300px;
+
+    position: fixed;
+    right: 50px;
+
+    border-style: solid;
+    border-color: rgb(182, 249, 255);
+    border-right: 1px;
+    border-top: 1px;
+    border-bottom: 1px;
+
+    overflow:scroll;
+    scrollbar-width: none;
+
+    list-style: none;
+}
+.toc-link{
+    list-style: none;
+}
+.toc-child{
+    list-style: none;
+}
