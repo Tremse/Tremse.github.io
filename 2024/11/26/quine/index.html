@@ -184,7 +184,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/Web/" style="color: #00a596">
+                <a href="/tags/Web/" style="color: #ffa2c4">
                     Web
                 </a>
             </span>
@@ -251,8 +251,8 @@ if(isset($_GET[&#39;source&#39;]))&#123;
     &lt;/body&gt;
   &lt;/html&gt;
 </code></pre>
-<p>&emsp;&emsp;关键在于<span style="font-family:'Cascadia Code';color:#6faf9f">if ($row[‘password’] &#x3D;&#x3D;&#x3D; $password) </span>,也就是说，我们查询出来的结果要和我们输入的密码强一致才能登录成功。也就是要用到quine这个“自己生自己”的技巧了。在做这题之前，我们要先搞清楚sql_quine注入的构造过程。</p>
-<h4 id="构造quine"><a href="#构造quine" class="headerlink" title="构造quine"></a>构造quine</h4><p>&emsp;&emsp;最基础的基本语句:<span style="font-family:'Cascadia Code';color:#6faf9f">select replace(“.”,char(46),”.”);</span>,作用就是把”.”中的.换成.(非常像废话，但这就是核心思路了)<br>&emsp;&emsp;接下来看这个语句:</p>
+<p>&emsp;&emsp;关键在于<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">if ($row[‘password’] &#x3D;&#x3D;&#x3D; $password) </span>,也就是说，我们查询出来的结果要和我们输入的密码强一致才能登录成功。也就是要用到quine这个“自己生自己”的技巧了。在做这题之前，我们要先搞清楚sql_quine注入的构造过程。</p>
+<h4 id="构造quine"><a href="#构造quine" class="headerlink" title="构造quine"></a>构造quine</h4><p>&emsp;&emsp;最基础的基本语句:<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">select replace(“.”,char(46),”.”);</span>,作用就是把”.”中的.换成.(非常像废话，但这就是核心思路了)<br>&emsp;&emsp;接下来看这个语句:</p>
 <pre><code class="SQL">select replace(&#39;replace(&quot;.&quot;,char(46),&quot;.&quot;)&#39;,char(46),&#39;replace(&quot;.&quot;,char(46),&quot;.&quot;)&#39;); #查询语句
 replace(&quot;replace(&quot;.&quot;,char(46),&quot;.&quot;)&quot;,char(46),&quot;replace(&quot;.&quot;,char(46),&quot;.&quot;)&quot;); #输出语句
 </code></pre>

