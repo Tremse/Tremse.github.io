@@ -7,14 +7,12 @@
 }
 #ic{
     position: relative;
-    left: 21px;
+    left: 25px;
 }
 #toc{
     max-width: 300px;
     max-height: 300px;
 
-    position: fixed;
-    right: 50px;
 
     border-style: solid;
     border-color: rgb(182, 249, 255);
