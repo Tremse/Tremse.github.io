@@ -3,7 +3,7 @@
 <html lang="zh_CN">
 <head>
     <meta charset="utf-8" />
-    <title>Categories: Cyber Security | Tremseの部屋</title>
+    <title>pickle反序列化 | Tremseの部屋</title>
     <meta name="author" content="Tremse" />
     <meta name="description" content="" />
     <meta name="keywords" content="" />
@@ -37,6 +37,10 @@
 
 
 <script src="/js/lib/preview.js"></script>
+
+
+
+
 
 
 
@@ -150,38 +154,20 @@
 </transition>
 
         <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
-            <div id="archives">
-    
-    <div class="categories-tags">
-        
-        
-        
-        <span>
-            <a href="/categories/%E6%9D%B1%E6%96%B9/" style="background: #03a9f4">
-                <span class="icon">
-                    <i class="fa-solid fa-bookmark fa-fw"></i>
-                </span>
-                東方
-            </a>
+            <div class="article">
+    <div>
+        <h1>pickle反序列化</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2024/12/4
         </span>
         
-        
-        
-        <span>
-            <a href="/categories/Cyber-Security/" style="background: linear-gradient(120deg, #9abbf7 0%, #ffbbf4 100%)">
-                <span class="icon">
-                    <i class="fa-solid fa-bookmark fa-fw"></i>
-                </span>
-                Cyber Security
-            </a>
-        </span>
-        
-        
-        
-        
-        
-        <span>
-            <a href="/categories/CTF/" style="background: #03a9f4">
+        <span class="category">
+            <a href="/categories/CTF/">
                 <span class="icon">
                     <i class="fa-solid fa-bookmark fa-fw"></i>
                 </span>
@@ -190,55 +176,51 @@
         </span>
         
         
+        <span class="tags">
+            <span class="icon">
+                <i class="fa-solid fa-tags fa-fw"></i>
+            </span>
+            
+            
+            <span class="tag">
+                
+                <a href="/tags/Web/" style="color: #ffa2c4">
+                    Web
+                </a>
+            </span>
+            
+            <span class="tag">
+                
+                <a href="/tags/Py/" style="color: #00bcd4">
+                    Py
+                </a>
+            </span>
+            
+        </span>
+        
     </div>
     
-    <div class="timeline">
-        <div class="timeline-tail"></div>
-        <div class="timeline-content">
-            <div class="item-time">2024/11/21</div>
-            <a href="/2024/11/21/Java-web/">
-                <h3>Java Web 笔记</h3>
-            </a>
-            <div class="info">
-                
-                <span class="category">
-                    <a href="/categories/Cyber-Security/">
-                        <span class="icon">
-                            <i class="fa-solid fa-bookmark fa-fw"></i>
-                        </span>
-                        Cyber Security
-                    </a>
-                </span>
-                
-                
-                <span class="tags">
-                    <span class="icon">
-                        <i class="fa-solid fa-tags fa-fw"></i>
-                    </span>
-                    
-                    
-                    <span class="tag">
-                        
-                        <a href="/tags/Java/" style="color: #00a596">
-                            Java
-                        </a>
-                    </span>
-                    
-                    <span class="tag">
-                        
-                        <a href="/tags/Web/" style="color: #00bcd4">
-                            Web
-                        </a>
-                    </span>
-                    
-                </span>
-                
-            </div>
-        </div>
-    </div>
-    
-</div>
+    <div class="content" v-pre>
+        
+        <h3 id="什么是pickle"><a href="#什么是pickle" class="headerlink" title="什么是pickle?"></a>什么是pickle?</h3><p>&emsp;&emsp;pickle是python的序列化工具，可以将python对象序列化为字节流，然后再反序列化为python对象。当然，其中的原理还是比较复杂的，具体可以看看<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/89132768">这篇文章</a>，写的还是非常详细滴~<br>&emsp;&emsp;这里主要记一下怎么利用这里存在的漏洞喵~</p>
+<h3 id="pickle和__reduce__方法"><a href="#pickle和-reduce-方法" class="headerlink" title="pickle和__reduce__方法"></a>pickle和__reduce__方法</h3><p>&emsp;&emsp;python中类的__reduce__方法，在pickle反序列化的时候会被执行。它应当返回字符串或者一个元组，这里主要考虑返回元组的状况。<br>&emsp;&emsp;下例:</p>
+<pre><code class="python">class PickleRCE(object):
+    def __reduce__(self):
+        import subprocess
+        return (subprocess.getoutput,(command,)) #也可以是(map,(subprocess.getoutput,command))
+</code></pre>
+<p>&emsp;&emsp;这里返回一个二元组，第一个元素是某个对象，而第二个参数也是一个元组，是我们希望传输给首个元素这个对象的参数。像这个例子，相当于是调用了subprocess.getoutput(command),即用子进程执行命令command。<br>&emsp;&emsp;这时我们将其序列化，在存在反序列化漏洞的站点上传这串序列化字符串，就能达到rce的效果。这就是比较经典的pickle反序列化漏洞的利用手法。</p>
 
+    </div>
+    
+    
+    
+    
+    
+    
+    
+
+</div>
             <footer id="footer">
     <div id="footer-wrap">
         <div>
@@ -267,6 +249,12 @@
         
     </div>
     <script src="/js/main.js"></script>
+    
+    
+
+
+
+
     
 </body>
 </html>

