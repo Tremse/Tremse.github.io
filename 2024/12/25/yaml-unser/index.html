@@ -191,7 +191,7 @@
             
             <span class="tag">
                 
-                <a href="/tags/Py/" style="color: #03a9f4">
+                <a href="/tags/Py/" style="color: #ffa2c4">
                     Py
                 </a>
             </span>
@@ -202,6 +202,15 @@
     
     <div class="content" v-pre>
         
+    <div id="toc">
+        <span class="icon">
+            <i class="fa-solid fa-bars" id="ic"></i>
+        </span>
+        <span class="toc_title">目录</span>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFyaml"><span class="toc-text">什么是yaml?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%88%90%E5%9B%A0"><span class="toc-text">漏洞成因</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#pythonx2fobjectx2fnew-%E5%92%8C-pythonx2fobjectx2fapply%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">!!python&#x2F;object&#x2F;new 和 !!python&#x2F;object&#x2F;apply的实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pythonx2fmodule%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">!!python&#x2F;module的实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pythonx2fname%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-text">!!python&#x2F;name的实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8Epyyaml%E6%A8%A1%E5%9D%97%E7%89%88%E6%9C%AClt51%E7%9A%84%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95"><span class="toc-text">对于PyYAML模块版本&lt;5.1的漏洞利用手法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#pythonx2fobjectx2fnew-%E5%92%8C-pythonx2fobjectx2fapply%E7%9A%84%E5%88%A9%E7%94%A8"><span class="toc-text">!!python&#x2F;object&#x2F;new 和 !!python&#x2F;object&#x2F;apply的利用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pythonx2fmodule%E7%9A%84%E5%88%A9%E7%94%A8"><span class="toc-text">!!python&#x2F;module的利用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#pythonx2fname%E7%9A%84%E5%88%A9%E7%94%A8"><span class="toc-text">!!python&#x2F;name的利用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8Epyyaml%E6%A8%A1%E5%9D%97%E7%89%88%E6%9C%ACgtx3d51%E7%9A%84%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95"><span class="toc-text">对于PyYAML模块版本&gt;&#x3D;5.1的漏洞利用手法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E9%AB%98%E7%BA%A7%E7%9A%84%E5%88%A9%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">更高级的利用方法</span></a></li></ol></li></ol></li></ol>
+        <link rel="stylesheet" type="text/css" href="/css/toc.css">
+    </div>
+
         <h2 id="什么是yaml"><a href="#什么是yaml" class="headerlink" title="什么是yaml?"></a>什么是yaml?</h2><p>&emsp;&emsp;YAML是一种人类可读的数据序列化格式，经常用于配置文件和数据交换。它的设计目标是易于阅读和编写，并且能够被不同编程语言支持的解析器解析。<br>&emsp;&emsp;在学习yaml反序列化漏洞之前，肯定要先学学它的基本语法，这里就不过多赘述了，可以看<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50367873/article/details/134009615">这个教程</a><br>&emsp;&emsp;这里要重点注意一下类型转换这部分。漏洞利用用的到的一些yaml和python类型转换如下</p>
 <table blockindex="29">
     <thead>
@@ -238,11 +247,9 @@
 <blockquote>
 <ul>
 <li>python&#x2F;object&#x2F;apply–&gt;construct_python_object_apply</li>
-</ul>
-</blockquote>
-<ul>
 <li>python&#x2F;object&#x2F;new–&gt;construct_python_object_new</li>
 </ul>
+</blockquote>
 <pre><code class="python">def construct_python_object_apply(self, suffix, node, newobj=False):
         # Format:
         #   !!python/object/apply       # (or !!python/object/new)
@@ -358,7 +365,7 @@
         return self.find_python_name(suffix, node.start_mark)
 </code></pre>
 <p>&emsp;&emsp;可见其调用了find_python_name，这个函数之前已经解释过了。最终是返回了module中的name。</p>
-<h2 id="对于pyyaml模块版本lt51的漏洞利用手法"><a href="#对于PyYAML模块版本" class="headerlink" title="对于PyYAML模块版本&lt;5.1的漏洞利用手法"></a>对于PyYAML模块版本&lt;5.1的漏洞利用手法</h2><pre><code class="python">yaml.load(data,Loader=) #加载单个YAML配置
+<h3 id="对于pyyaml模块版本lt51的漏洞利用手法"><a href="#对于PyYAML模块版本" class="headerlink" title="对于PyYAML模块版本&lt;5.1的漏洞利用手法"></a>对于PyYAML模块版本&lt;5.1的漏洞利用手法</h3><pre><code class="python">yaml.load(data,Loader=) #加载单个YAML配置
 yaml.load_all(data) # 加载多个YAML配置
 </code></pre>
 <p>&emsp;&emsp;这些版本的加载器默认为Constructor，并不安全。</p>
@@ -389,7 +396,7 @@ else:
     print(&quot;you are not ikun&quot;)
 </code></pre>
 <p>&emsp;&emsp;我们可以这样来绕过条件判断。当key未知或者不可预测时，也可以这样过条件判断。当然利用方法不止这些，应用总是灵活的。</p>
-<h2 id="对于pyyaml模块版本gtx3d51的漏洞利用手法"><a href="#对于PyYAML模块版本-5-1的漏洞利用手法" class="headerlink" title="对于PyYAML模块版本&gt;&#x3D;5.1的漏洞利用手法"></a>对于PyYAML模块版本&gt;&#x3D;5.1的漏洞利用手法</h2><p>&emsp;&emsp;在PyYaml&gt;&#x3D;5.1的版本中,find_python_name方法添加了unsafe&#x3D;False导致我们不能直接通过__import__来引入模块。并且在PyYAML&gt;&#x3D;5.1版本中,将默认加载器调整为FullConstructor，加载的模块必须位于sys.modules中(说明程序已经 import 过了才让加载)才能够加载成功。<br>&emsp;&emsp;如果没有对于加载器选择的过滤，可以直接变更加载器，然后和之前的操作一样:</p>
+<h3 id="对于pyyaml模块版本gtx3d51的漏洞利用手法"><a href="#对于PyYAML模块版本-5-1的漏洞利用手法" class="headerlink" title="对于PyYAML模块版本&gt;&#x3D;5.1的漏洞利用手法"></a>对于PyYAML模块版本&gt;&#x3D;5.1的漏洞利用手法</h3><p>&emsp;&emsp;在PyYaml&gt;&#x3D;5.1的版本中,find_python_name方法添加了unsafe&#x3D;False导致我们不能直接通过__import__来引入模块。并且在PyYAML&gt;&#x3D;5.1版本中,将默认加载器调整为FullConstructor，加载的模块必须位于sys.modules中(说明程序已经 import 过了才让加载)才能够加载成功。<br>&emsp;&emsp;如果没有对于加载器选择的过滤，可以直接变更加载器，然后和之前的操作一样:</p>
 <pre><code class="python">yaml.unsafe_load(paylaod)
 yaml.load(payload,Loader=UnsafeLoader)
 </code></pre>

@@ -10,8 +10,6 @@
     left: 25px;
 }
 #toc{
-    max-width: 300px;
-    max-height: 300px;
 
 
     border-style: solid;
@@ -19,9 +17,6 @@
     border-right: 1px;
     border-top: 1px;
     border-bottom: 1px;
-
-    overflow:scroll;
-    scrollbar-width: none;
 
     list-style: none;
 }
